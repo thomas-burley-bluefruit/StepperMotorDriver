@@ -1,0 +1,14 @@
+buildVariant:
+  default: firmware
+  choices:
+    firmware:
+      short: Firmware
+      buildType: Debug
+      settings: 
+        # CMAKE_TOOLCHAIN_FILE: arm-none-eabi-gcc.cmake 
+        FIRMWARE: 1
+    tests:
+      short: Tests
+      buildType: Debug
+      settings: 
+        TESTING: 1
