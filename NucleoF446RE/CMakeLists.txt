@@ -5,10 +5,16 @@ set(SOURCES
   Application/Application.h
   Application/Drivers/GpioDriver.cpp
   Application/Drivers/GpioDriver.h
+  Application/Drivers/InterruptTimer.cpp
+  Application/Drivers/InterruptTimer.h
+  Application/Initialisation.cpp
+  Application/Initialisation.h
 )
 
 set(INCLUDES
-  Application)
+  Application
+  Application/Drivers
+)
 
 file(GLOB_RECURSE CORE_SOURCES CONFIGURE_DEPENDS "Core/*.c")
 find_directories_recursive(CORE_INCLUDES "Core/*.h")
@@ -23,4 +29,5 @@ target_compile_definitions(${NAME} PRIVATE ${COMPILE_DEFINITIONS})
 target_include_directories(${NAME} PUBLIC ${INCLUDES} ${CORE_INCLUDES} ${DRIVERS_INCLUDES})
 target_link_libraries(${NAME}
   IDrivers
+  UserButton
 )
