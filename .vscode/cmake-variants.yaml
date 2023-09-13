@@ -5,10 +5,12 @@ buildVariant:
       short: Firmware
       buildType: Debug
       settings: 
-        # CMAKE_TOOLCHAIN_FILE: arm-none-eabi-gcc.cmake 
+        CMAKE_TOOLCHAIN_FILE: arm-none-eabi-gcc.cmake 
         FIRMWARE: 1
+        TARGET: NucleoF446RE
     tests:
       short: Tests
       buildType: Debug
       settings: 
         TESTING: 1
+        TARGET: Tests

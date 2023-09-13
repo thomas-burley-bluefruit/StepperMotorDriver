@@ -1,0 +1,52 @@
+{
+  "cmake.buildBeforeRun": true,
+  "cmake.additionalCompilerSearchDirs": [],
+  "cmake.buildDirectory": "${workspaceFolder}/cmake-build/vscode-${buildKit}-${variant:target}",
+  "cmake.generator": "Ninja",
+  "cmake.sourceDirectory": "${workspaceFolder}",
+  "cSpell.words": [
+    "GPIO",
+    "GPIOA",
+    "GPIOB",
+    "GPIOC",
+    "GPIOD",
+    "GPIOE",
+    "GPIOF",
+    "Superloop"
+  ],
+  "files.exclude": {
+    "**/.git": true,
+    "**/.metadata": true,
+    "**/.mxproject": true,
+    "**/.settings": true,
+    "**/*Debug/": true,
+    "**/*Release/": true
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/.metadata": true,
+    "**/.mxproject": true,
+    "**/.settings": true,
+    "**/build/": true,
+    "**/*Debug/": true,
+    "**/*Release/": true
+  },
+  "testMate.cpp.debug.configTemplate": {
+    "args": "${argsArray}",
+    "cwd": "${cwd}",
+    "env": "${envObj}",
+    "externalConsole": false,
+    "program": "${exec}",
+    "request": "launch",
+    "sourceFileMap": "${sourceFileMapObj}",
+    "stopAtEntry": false,
+    "type": "cppvsdbg"
+  },
+  "testMate.cpp.test.executables": "${workspaceFolder}/cmake-build/*vscode*/**/*{Tests.}*",
+  "todo-tree.filtering.excludeGlobs": [
+    "**/build/**"
+  ],
+  "todo-tree.filtering.includeGlobs": [
+    "**/**"
+  ]
+}

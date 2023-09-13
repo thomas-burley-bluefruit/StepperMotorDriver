@@ -11,10 +11,6 @@
   },
   {
     "name": "GNU ARM",
-    "compilers": {
-      "CC": "C:/Tools/10 2020-q4-major/bin/arm-none-eabi-gcc.exe",
-      "CXX": "C:/Tools/10 2020-q4-major/bin/arm-none-eabi-gcc.exe"
-    },
     "toolchainFile": "CMake/arm-none-eabi-gcc.cmake"
   }
 ]

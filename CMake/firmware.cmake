@@ -3,7 +3,6 @@ enable_language(C ASM)
 set(EXECUTABLE ${PROJECT_NAME}.out)
 set(SOURCES
   NucleoF446RE/Core/Inc/stm32f4xx_hal_conf.h
-  Application/main.cpp
   NucleoF446RE/Core/Src/system_stm32f4xx.c
   NucleoF446RE/Core/Startup/startup_stm32f446retx.s)
 
@@ -45,10 +44,8 @@ set_target_properties(${EXECUTABLE} PROPERTIES ADDITIONAL_CLEAN_FILES
   "${PROJECT_NAME}.bin;${PROJECT_NAME}.hex;${PROJECT_NAME}.map")
 
 target_link_libraries(${EXECUTABLE} PUBLIC
-  Application
   STM32F4)
 
-add_subdirectory(Application)
 add_subdirectory(NucleoF446RE)
 
 # Print executable size

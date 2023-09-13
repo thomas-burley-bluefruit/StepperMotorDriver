@@ -1,0 +1,43 @@
+---
+BasedOnStyle: Microsoft
+
+AccessModifierOffset: -2
+ColumnLimit: 80
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+IndentWidth: 2
+TabWidth: 8
+UseTab: Never
+MaxEmptyLinesToKeep: 1
+ReflowComments: true
+
+AlignAfterOpenBracket: DontAlign
+AlignArrayOfStructures: Left
+AlignOperands: DontAlign
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: All
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
+CompactNamespaces: true
+Cpp11BracedListStyle: true
+DerivePointerAlignment: false
+EmptyLineBeforeAccessModifier: LogicalBlock
+FixNamespaceComments: false
+PackConstructorInitializers: Never
+PenaltyBreakComment: 10000000
+PointerAlignment: Left
+SeparateDefinitionBlocks: Always
+SortIncludes: CaseInsensitive
+SortUsingDeclarations: true
+SpaceBeforeCpp11BracedList: true
+ForEachMacros: [ foreach, Q_FOREACH, BOOST_FOREACH, forever, Q_FOREVER, QBENCHMARK, QBENCHMARK_ONCE , wl_resource_for_each, wl_resource_for_each_safe ]
+WhitespaceSensitiveMacros: [ TEST, TEST_F, TEST_P, Q_OBJECT, Q_PROPERTY, Q_CLASSINFO, QML_ELEMENT, QML_SINGLETON, QML_NAMED_ELEMENT, QML_ANONYMOUS, QML_ATTACHED, QML_UNCREATABLE ]
+
+...

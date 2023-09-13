@@ -1,10 +1,10 @@
-set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR ARM)
+set(CMAKE_SYSTEM_NAME Generic)
 
 if(MINGW OR CYGWIN OR WIN32)
-    set(UTIL_SEARCH_CMD where)
+  set(UTIL_SEARCH_CMD where)
 elseif(UNIX OR APPLE)
-    set(UTIL_SEARCH_CMD which)
+  set(UTIL_SEARCH_CMD which)
 endif()
 
 set(TOOLCHAIN_PREFIX arm-none-eabi-)

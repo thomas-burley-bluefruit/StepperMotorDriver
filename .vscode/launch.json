@@ -1,0 +1,81 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "STM32F446RE ST-LINK",
+            "type": "cortex-debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "${command:cmake.launchTargetPath}",
+            "request": "launch",
+            "servertype": "stlink",
+            "stlinkPath": "${env:STM32CUBECLT_PATH}/STLink-gdb-server/bin/ST-LINK_gdbserver.exe",
+            "stm32cubeprogrammer": "${env:STM32CUBECLT_PATH}/STM32CubeProgrammer/bin",
+            "armToolchainPath": "${env:STM32CUBECLT_PATH}/GNU-tools-for-STM32/bin",
+            "runToEntryPoint": "main",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "device": "STM32F446RETx",
+            "svdFile": "${env:STM32CUBECLT_PATH}/STMicroelectronics_CMSIS_SVD/STM32F446.svd",
+            "presentation": {
+                "hidden": false,
+                "group": "STM32F446RE",
+                "order": 1
+            }
+        },
+        {
+            "name": "STM32F446RE OpenOCD",
+            "type": "cortex-debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "${command:cmake.launchTargetPath}",
+            "request": "launch",
+            "servertype": "openocd",
+            "armToolchainPath": "${env:STM32CUBECLT_PATH}/GNU-tools-for-STM32/bin",
+            "runToEntryPoint": "main",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "device": "STM32F446RETx",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f4x.cfg"
+            ],
+            "svdFile": "${env:STM32CUBECLT_PATH}/STMicroelectronics_CMSIS_SVD/STM32F446.svd",
+            "presentation": {
+                "hidden": false,
+                "group": "STM32F446RE",
+                "order": 1
+            }
+        },
+        {
+            "name": "STM32F446RE J-Link",
+            "type": "cortex-debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "${command:cmake.launchTargetPath}",
+            "request": "launch",
+            "servertype": "jlink",
+            "armToolchainPath": "${env:STM32CUBECLT_PATH}/GNU-tools-for-STM32/bin",
+            "runToEntryPoint": "main",
+            "device": "STM32F446RETx",
+            "interface": "swd",
+            "svdFile": "${env:STM32CUBECLT_PATH}/STMicroelectronics_CMSIS_SVD/STM32F446.svd",
+            "presentation": {
+                "hidden": false,
+                "group": "STM32F446RE",
+                "order": 1
+            }
+        },
+        {
+            "name": "PowerShell: start-stlink-gdbserver.ps1",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/Scripts/start-stlink-gdbserver.ps1",
+            "cwd": "${cwd}"
+        },
+    ]
+}
