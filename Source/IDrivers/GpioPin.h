@@ -17,6 +17,11 @@ struct GpioPin
 {
   GpioPort port;
   uint8_t pin;
+
+  bool operator==(const GpioPin& rhs) const
+  {
+    return this->port == rhs.port && this->pin == rhs.pin;
+  }
 };
 
 }

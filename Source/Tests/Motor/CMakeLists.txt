@@ -1,14 +1,14 @@
-set(NAME Tests.UserButton)
+set(NAME Tests.Motor)
 
 set(SOURCES
-  tests.UserButton.cpp)
+  tests.L298n.cpp)
 
 set(INCLUDES .)
 
 add_executable(${NAME} ${SOURCES})
 target_include_directories(${NAME} PRIVATE ${INCLUDES})
 target_link_libraries(${NAME} PUBLIC
-  UserButton
+  Motor
   Tests.Mocks
   gmock_main)
 

@@ -45,15 +45,8 @@ protected:
   }
 };
 
-TEST_F(UserButtonTests, Init_registers_callback_with_interrupt_timer)
+TEST_F(UserButtonTests, Constructor_registers_callback_with_interrupt_timer)
 {
-  // Given
-  ASSERT_FALSE(mInterruptTimer.RegisterCallbackCalled);
-
-  // When
-  mUserButton.Init();
-
-  // Then
   ASSERT_TRUE(mInterruptTimer.RegisterCallbackCalled);
   ASSERT_EQ(&mUserButton, mInterruptTimer.Callback);
 }

@@ -4,6 +4,7 @@ set(SOURCES
   mock.ButtonPressCallback.h
   mock.GpioDriver.h
   mock.InterruptTimer.h
+  MockCalls.h
 )
 
 set(INCLUDES .)

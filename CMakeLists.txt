@@ -20,4 +20,5 @@ if(TESTING)
 endif()
 
 add_subdirectory(Source/IDrivers)
+add_subdirectory(Source/Motor)
 add_subdirectory(Source/UserButton)
