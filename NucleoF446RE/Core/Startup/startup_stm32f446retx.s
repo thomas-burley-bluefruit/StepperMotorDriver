@@ -249,6 +249,7 @@ g_pfnVectors:
 * this definition.
 * 
 *******************************************************************************/
+/*
    .weak      NMI_Handler
    .thumb_set NMI_Handler,Default_Handler
   
@@ -274,7 +275,8 @@ g_pfnVectors:
    .thumb_set PendSV_Handler,Default_Handler
 
    .weak      SysTick_Handler
-   .thumb_set SysTick_Handler,Default_Handler              
+   .thumb_set SysTick_Handler,SysTick_Handler
+*/
   
    .weak      WWDG_IRQHandler                   
    .thumb_set WWDG_IRQHandler,Default_Handler      
@@ -440,10 +442,11 @@ g_pfnVectors:
                   
    .weak      TIM6_DAC_IRQHandler                  
    .thumb_set TIM6_DAC_IRQHandler,Default_Handler
-               
-   .weak      TIM7_IRQHandler            
-   .thumb_set TIM7_IRQHandler,Default_Handler
-         
+/*
+    .weak      TIM7_IRQHandler            
+    .thumb_set TIM7_IRQHandler,Default_Handler
+*/
+
    .weak      DMA2_Stream0_IRQHandler               
    .thumb_set DMA2_Stream0_IRQHandler,Default_Handler
                

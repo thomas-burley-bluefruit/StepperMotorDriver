@@ -1,2 +1,11 @@
 cmake-build/*
+
+# STM32CubeIDE
 .metadata/
+.settings/
+**/*Debug/
+**/*Release/
+*.bin
+*.launch
+*.lst
+.mxproject

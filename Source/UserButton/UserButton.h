@@ -16,7 +16,6 @@ class UserButton : public IUserButton, public driver::IExternalInterruptReceiver
 public:
   UserButton(driver::IGpioDriver& gpio,
     driver::IInterruptTimer& interruptTimer);
-  void Init();
   void RegisterCallback(IButtonPressCallback* callback) override;
   void OnExternalInterrupt() override;
 

@@ -9,10 +9,6 @@ UserButton::UserButton(driver::IGpioDriver& gpio,
   mGpio(gpio),
   mInterruptTimer(interruptTimer)
 {
-}
-
-void UserButton::Init()
-{
   mInterruptTimer.RegisterCallback(this);
 }
 
