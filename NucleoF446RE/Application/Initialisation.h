@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IDualChannelMotorDriver.h"
 #include "IGpioDriver.h"
 #include "IInterruptTimer.h"
 #include "IUserButton.h"
@@ -12,5 +13,6 @@ public:
 private:
   static driver::IGpioDriver& GetGpioDriver();
   static driver::IInterruptTimer& GetInterruptTimer();
+  static motor::IDualChannelMotorDriver& GetDualChannelMotorDriver();
   static userinput::IUserButton& GetUserButton();
 };

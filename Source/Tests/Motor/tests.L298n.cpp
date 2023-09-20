@@ -21,7 +21,7 @@ protected:
 TEST_F(L298nTests, Setting_channel_to_be_non_energised_sets_both_channel_pins_low)
 {
   // Given, when
-  mL298n.SetChannelPolarity(Channel::A, Polarity::Off);
+  mL298n.SetChannelPolarity(Channel::A, Direction::Off);
 
   // Then
   ASSERT_EQ(2, mGpio.SetCalls.CallCount());
@@ -37,7 +37,7 @@ TEST_F(L298nTests, Setting_channel_to_be_non_energised_sets_both_channel_pins_lo
   mGpio.Reset();
 
   // Given, when
-  mL298n.SetChannelPolarity(Channel::B, Polarity::Off);
+  mL298n.SetChannelPolarity(Channel::B, Direction::Off);
 
   // Then
   ASSERT_EQ(2, mGpio.SetCalls.CallCount());
@@ -54,7 +54,7 @@ TEST_F(L298nTests, Setting_channel_to_be_non_energised_sets_both_channel_pins_lo
 TEST_F(L298nTests, Setting_channel_to_be_positive_polarity)
 {
   // Given, when
-  mL298n.SetChannelPolarity(Channel::A, Polarity::Positive);
+  mL298n.SetChannelPolarity(Channel::A, Direction::Forward);
 
   // Then
   ASSERT_EQ(2, mGpio.SetCalls.CallCount());
@@ -70,7 +70,7 @@ TEST_F(L298nTests, Setting_channel_to_be_positive_polarity)
   mGpio.Reset();
 
   // Given, when
-  mL298n.SetChannelPolarity(Channel::B, Polarity::Positive);
+  mL298n.SetChannelPolarity(Channel::B, Direction::Forward);
 
   // Then
   ASSERT_EQ(2, mGpio.SetCalls.CallCount());
@@ -87,7 +87,7 @@ TEST_F(L298nTests, Setting_channel_to_be_positive_polarity)
 TEST_F(L298nTests, Setting_channel_to_be_negative_polarity)
 {
   // Given, when
-  mL298n.SetChannelPolarity(Channel::A, Polarity::Negative);
+  mL298n.SetChannelPolarity(Channel::A, Direction::Reverse);
 
   // Then
   ASSERT_EQ(2, mGpio.SetCalls.CallCount());
@@ -103,7 +103,7 @@ TEST_F(L298nTests, Setting_channel_to_be_negative_polarity)
   mGpio.Reset();
 
   // Given, when
-  mL298n.SetChannelPolarity(Channel::B, Polarity::Negative);
+  mL298n.SetChannelPolarity(Channel::B, Direction::Reverse);
 
   // Then
   ASSERT_EQ(2, mGpio.SetCalls.CallCount());

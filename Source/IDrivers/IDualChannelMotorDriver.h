@@ -9,10 +9,10 @@ enum class Channel
   B
 };
 
-enum class Polarity
+enum class Direction
 {
-  Positive,
-  Negative,
+  Forward,
+  Reverse,
   Off,
   Count
 };
@@ -20,7 +20,8 @@ enum class Polarity
 class IDualChannelMotorDriver
 {
 public:
-  virtual void SetChannelPolarity(Channel channel, Polarity polarity) = 0;
+  virtual void SetChannelPolarity(Channel channel, Direction polarity) = 0;
+  virtual Direction GetChannelPolarity(Channel channel) = 0;
   virtual ~IDualChannelMotorDriver() = default;
 };
 

@@ -9,9 +9,32 @@ L298n::L298n(driver::IGpioDriver& gpio) :
 {
 }
 
-void L298n::SetChannelPolarity(Channel channel, Polarity polarity)
+void L298n::SetChannelPolarity(Channel channel, Direction polarity)
 {
+  switch (channel)
+  {
+  case Channel::A:
+    mChannelAPolarity = polarity;
+    break;
+  case Channel::B:
+    mChannelBPolarity = polarity;
+    break;
+  };
+
   SetChannelLevels(channel, LevelsForPolarity[static_cast<size_t>(polarity)]);
+}
+
+Direction L298n::GetChannelPolarity(Channel channel)
+{
+  switch (channel)
+  {
+  case Channel::A:
+    return mChannelAPolarity;
+  case Channel::B:
+    return mChannelBPolarity;
+  default:
+    return Direction::Count;
+  };
 }
 
 void L298n::SetChannelLevels(Channel channel, ChannelInputLevels levels)

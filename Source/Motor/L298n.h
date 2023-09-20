@@ -3,6 +3,8 @@
 #include "IDualChannelMotorDriver.h"
 #include "IGpioDriver.h"
 
+#include <cstddef>
+
 namespace motor
 {
 
@@ -12,7 +14,8 @@ public:
   L298n(driver::IGpioDriver& gpio);
 
   // IDualChannelMotorDriver
-  void SetChannelPolarity(Channel channel, Polarity polarity);
+  void SetChannelPolarity(Channel channel, Direction polarity) override;
+  Direction GetChannelPolarity(Channel channel) override;
 
   static constexpr driver::GpioPort GpioPort = driver::GpioPort::PortB;
   static constexpr driver::GpioPin ChannelA1 {.port = GpioPort, .pin = 2};
@@ -30,11 +33,15 @@ private:
   };
 
   static constexpr ChannelInputLevels
-    LevelsForPolarity[static_cast<size_t>(Polarity::Count)] = {
+    LevelsForPolarity[static_cast<size_t>(Direction::Count)] = {
       {true,  false}, // Positive
-      {false, true }, // Negative
+      {false, true }, // Reverse
       {false, false}  // Off
   };
+
+private:
+  Direction mChannelAPolarity = Direction::Off;
+  Direction mChannelBPolarity = Direction::Off;
 
 private:
   void SetChannelLevels(Channel channel, ChannelInputLevels levels);
