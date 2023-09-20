@@ -2,8 +2,12 @@ set(NAME Motor)
 enable_language(C CXX)
 
 set(SOURCES
+  FullStepSequence.h
+  IStepper.h
   L298n.cpp
-  L298n.h)
+  L298n.h
+  Stepper.cpp
+  Stepper.h)
 
 set(INCLUDES .)
 

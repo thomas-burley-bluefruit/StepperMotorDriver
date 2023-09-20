@@ -1,7 +1,8 @@
 set(NAME Tests.Motor)
 
 set(SOURCES
-  tests.L298n.cpp)
+  tests.L298n.cpp
+  tests.Stepper.cpp)
 
 set(INCLUDES .)
 

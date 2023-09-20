@@ -9,7 +9,7 @@ L298n::L298n(driver::IGpioDriver& gpio) :
 {
 }
 
-void L298n::SetChannelPolarity(Channel channel, Direction polarity)
+void L298n::SetChannelDirection(Channel channel, Direction polarity)
 {
   switch (channel)
   {
@@ -24,7 +24,7 @@ void L298n::SetChannelPolarity(Channel channel, Direction polarity)
   SetChannelLevels(channel, LevelsForPolarity[static_cast<size_t>(polarity)]);
 }
 
-Direction L298n::GetChannelPolarity(Channel channel)
+Direction L298n::GetChannelDirection(Channel channel)
 {
   switch (channel)
   {

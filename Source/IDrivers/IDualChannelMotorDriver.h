@@ -20,8 +20,8 @@ enum class Direction
 class IDualChannelMotorDriver
 {
 public:
-  virtual void SetChannelPolarity(Channel channel, Direction polarity) = 0;
-  virtual Direction GetChannelPolarity(Channel channel) = 0;
+  virtual void SetChannelDirection(Channel channel, Direction polarity) = 0;
+  virtual Direction GetChannelDirection(Channel channel) = 0;
   virtual ~IDualChannelMotorDriver() = default;
 };
 

@@ -2,6 +2,7 @@ set(NAME Tests.Mocks)
 
 set(SOURCES
   mock.ButtonPressCallback.h
+  mock.DualChannelMotorDriver.h
   mock.GpioDriver.h
   mock.InterruptTimer.h
   MockCalls.h

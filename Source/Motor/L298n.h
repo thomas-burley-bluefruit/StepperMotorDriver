@@ -14,8 +14,8 @@ public:
   L298n(driver::IGpioDriver& gpio);
 
   // IDualChannelMotorDriver
-  void SetChannelPolarity(Channel channel, Direction polarity) override;
-  Direction GetChannelPolarity(Channel channel) override;
+  void SetChannelDirection(Channel channel, Direction polarity) override;
+  Direction GetChannelDirection(Channel channel) override;
 
   static constexpr driver::GpioPort GpioPort = driver::GpioPort::PortB;
   static constexpr driver::GpioPin ChannelA1 {.port = GpioPort, .pin = 2};
