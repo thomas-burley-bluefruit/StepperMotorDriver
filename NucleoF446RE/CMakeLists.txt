@@ -30,7 +30,9 @@ target_compile_options(${NAME} PRIVATE ${COMPILE_OPTIONS})
 target_compile_definitions(${NAME} PRIVATE ${COMPILE_DEFINITIONS})
 target_include_directories(${NAME} PUBLIC ${INCLUDES} ${CORE_INCLUDES} ${DRIVERS_INCLUDES})
 target_link_libraries(${NAME}
+  Command
   IDrivers
   Motor
+  Terminal
   UserButton
 )

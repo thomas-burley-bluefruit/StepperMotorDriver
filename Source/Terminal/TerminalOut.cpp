@@ -21,6 +21,6 @@ void TerminalOut::TextOut(const char* formatText, ...)
   vsnprintf(mTextOutBuffer.data(), MaxTextOutLength, formatText, args);
   va_end(args);
 
-  const auto size = strnlen(mTextOutBuffer.data(), MaxTextOutLength);
+  const auto size = strlen(mTextOutBuffer.data());
   mUart.Transmit(reinterpret_cast<const uint8_t*>(mTextOutBuffer.data()), size);
 }
