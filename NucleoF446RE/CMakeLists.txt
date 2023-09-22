@@ -5,6 +5,8 @@ set(SOURCES
   Application/Application.h
   Application/Drivers/GpioDriver.cpp
   Application/Drivers/GpioDriver.h
+  Application/Drivers/UartDriver.cpp
+  Application/Drivers/UartDriver.h
   Application/Drivers/InterruptTimer.cpp
   Application/Drivers/InterruptTimer.h
   Application/Initialisation.cpp

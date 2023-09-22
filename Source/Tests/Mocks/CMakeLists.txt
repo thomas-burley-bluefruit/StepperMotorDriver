@@ -2,9 +2,15 @@ set(NAME Tests.Mocks)
 
 set(SOURCES
   mock.ButtonPressCallback.h
+  mock.CommandHandler.h
+  mock.CommandRegistry.h
+  mock.CommandInterpreter.h
   mock.DualChannelMotorDriver.h
   mock.GpioDriver.h
   mock.InterruptTimer.h
+  mock.Terminal.h
+  mock.TerminalOut.h
+  mock.UartDriver.h
   MockCalls.h
 )
 

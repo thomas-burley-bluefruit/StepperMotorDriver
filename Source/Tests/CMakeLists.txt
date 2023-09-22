@@ -1,3 +1,5 @@
+add_subdirectory(Command)
 add_subdirectory(Mocks)
 add_subdirectory(Motor)
+add_subdirectory(Terminal)
 add_subdirectory(UserButton)
