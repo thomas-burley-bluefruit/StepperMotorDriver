@@ -7,7 +7,10 @@ set(SOURCES
   L298n.cpp
   L298n.h
   Stepper.cpp
-  Stepper.h)
+  Stepper.h
+  UserControl.cpp
+  UserControl.h
+)
 
 set(INCLUDES .)
 

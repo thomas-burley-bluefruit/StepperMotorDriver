@@ -11,9 +11,9 @@ class Stepper final : public IStepper
 {
 public:
   Stepper(IDualChannelMotorDriver& motorDriver);
-  void Init();
 
   // IStepper
+  void Init() override;
   void Step(size_t steps) override;
 
 private:
@@ -21,7 +21,6 @@ private:
 
 private:
   IDualChannelMotorDriver& mMotorDriver;
-  const FullStepSequence mStepSequence;
   size_t mSequencePos = 0;
 };
 
