@@ -5,7 +5,7 @@ set(SOURCES
   IButtonPressCallback.h
   IExternalInterruptReceiver.h
   IGpioDriver.h
-  IInterruptTimer.h
+  IInterruptTimer1Khz.h
   IDualChannelMotorDriver.h
   IUartDriver.h
 )

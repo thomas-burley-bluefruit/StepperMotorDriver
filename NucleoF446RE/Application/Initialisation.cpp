@@ -2,7 +2,7 @@
 #include "CommandInterpreter.h"
 #include "CommandRegistry.h"
 #include "GpioDriver.h"
-#include "InterruptTimer.h"
+#include "InterruptTimer1Khz.h"
 #include "L298n.h"
 #include "Stepper.h"
 #include "TerminalIn.h"
@@ -44,11 +44,11 @@ driver::IGpioDriver& Initialisation::GetGpioDriver()
   return gpioDriver;
 }
 
-driver::IInterruptTimer& Initialisation::GetInterruptTimer()
+driver::IInterruptTimer1Khz& Initialisation::GetInterruptTimer1Khz()
 {
-  static driver::InterruptTimer interruptTimer;
-  interruptTimer.Init();
-  return interruptTimer;
+  static driver::InterruptTimer1Khz interruptTimer1Khz;
+  interruptTimer1Khz.Init();
+  return interruptTimer1Khz;
 }
 
 driver::IUartDriver& Initialisation::GetUartDriver()
@@ -84,6 +84,7 @@ terminal::ITerminalOut& Initialisation::GetTerminalOut()
 
 userinput::IUserButton& Initialisation::GetUserButton()
 {
-  static userinput::UserButton userButton(GetGpioDriver(), GetInterruptTimer());
+  static userinput::UserButton userButton(GetGpioDriver(),
+    GetInterruptTimer1Khz());
   return userButton;
 }

@@ -1,4 +1,4 @@
-#include "InterruptTimer.h"
+#include "InterruptTimer1Khz.h"
 #include "tim.h"
 
 #include <cassert>
@@ -7,13 +7,13 @@ using namespace ::driver;
 
 static IExternalInterruptReceiver* sCallback = nullptr;
 
-void InterruptTimer::Init()
+void InterruptTimer1Khz::Init()
 {
   const auto result = HAL_TIM_Base_Start_IT(&htim7);
   assert(result == HAL_OK);
 }
 
-void InterruptTimer::RegisterCallback(IExternalInterruptReceiver* callback)
+void InterruptTimer1Khz::RegisterCallback(IExternalInterruptReceiver* callback)
 {
   sCallback = callback;
 }

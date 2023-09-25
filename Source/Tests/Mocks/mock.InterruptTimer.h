@@ -5,7 +5,7 @@
 namespace driver
 {
 
-class MockInterruptTimer final : public IInterruptTimer
+class MockInterruptTimer final : public IInterruptTimer1Khz
 {
 public:
   void RegisterCallback(IExternalInterruptReceiver* callback)

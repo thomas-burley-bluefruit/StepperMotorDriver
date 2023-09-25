@@ -3,7 +3,7 @@
 #include "IButtonPressCallback.h"
 #include "IExternalInterruptReceiver.h"
 #include "IGpioDriver.h"
-#include "IInterruptTimer.h"
+#include "IInterruptTimer1Khz.h"
 #include "IUserButton.h"
 
 #include <cstddef>
@@ -15,7 +15,7 @@ class UserButton : public IUserButton, public driver::IExternalInterruptReceiver
 {
 public:
   UserButton(driver::IGpioDriver& gpio,
-    driver::IInterruptTimer& interruptTimer);
+    driver::IInterruptTimer1Khz& interruptTimer);
   void RegisterCallback(IButtonPressCallback* callback) override;
   void OnExternalInterrupt() override;
 
@@ -27,7 +27,7 @@ private:
   bool Debounce();
 
   driver::IGpioDriver& mGpio;
-  driver::IInterruptTimer& mInterruptTimer;
+  driver::IInterruptTimer1Khz& mInterruptTimer;
 
   static constexpr driver::GpioPin ButtonGpio = {
     .port = driver::GpioPort::PortC, .pin = 13};

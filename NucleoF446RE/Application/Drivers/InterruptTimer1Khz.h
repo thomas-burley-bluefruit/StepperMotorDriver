@@ -1,11 +1,11 @@
 #pragma once
 
-#include "IInterruptTimer.h"
+#include "IInterruptTimer1Khz.h"
 
 namespace driver
 {
 
-class InterruptTimer final : public IInterruptTimer
+class InterruptTimer1Khz final : public IInterruptTimer1Khz
 {
 public:
   void Init();
