@@ -21,4 +21,5 @@ target_compile_definitions(${NAME} PRIVATE ${COMPILE_DEFINITIONS})
 target_include_directories(${NAME} PUBLIC ${INCLUDES})
 target_link_libraries(${NAME} PUBLIC
   IDrivers
-  UserButton)
+  UserButton
+  Command)

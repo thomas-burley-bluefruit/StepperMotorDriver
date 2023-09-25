@@ -13,6 +13,7 @@
 void Initialisation::Initialise()
 {
   (void)GetUserControl();
+  (void)GetTerminalIn();
   GetStepper().Init();
   GetTerminalIn().Start();
 }
@@ -70,11 +71,16 @@ motor::IStepper& Initialisation::GetStepper()
 
 motor::UserControl& Initialisation::GetUserControl()
 {
-  static motor::UserControl userControl(GetStepper(), GetUserButton());
+  static motor::UserControl userControl(GetStepper(), GetUserButton(),
+    GetCommandRegistry());
   return userControl;
 }
 
-terminal::ITerminalOut& Initialisation::GetTerminalOut() {}
+terminal::ITerminalOut& Initialisation::GetTerminalOut()
+{
+  static terminal::TerminalOut terminalOut(GetUartDriver());
+  return terminalOut;
+}
 
 userinput::IUserButton& Initialisation::GetUserButton()
 {
