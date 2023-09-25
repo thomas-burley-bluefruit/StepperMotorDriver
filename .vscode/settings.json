@@ -48,5 +48,9 @@
   ],
   "todo-tree.filtering.includeGlobs": [
     "**/**"
-  ]
+  ],
+  "files.associations": {
+    "xlocale": "cpp",
+    "xstring": "cpp"
+  }
 }

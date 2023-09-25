@@ -7,6 +7,7 @@ set(SOURCES
   IGpioDriver.h
   IInterruptTimer.h
   IDualChannelMotorDriver.h
+  IUartDriver.h
 )
 
 set(INCLUDES .)
