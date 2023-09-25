@@ -6,6 +6,7 @@ set(SOURCES
   IExternalInterruptReceiver.h
   IGpioDriver.h
   IInterruptTimer1Khz.h
+  IInterruptTimer10Khz.h
   IDualChannelMotorDriver.h
   IUartDriver.h
 )

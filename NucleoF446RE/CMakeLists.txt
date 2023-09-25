@@ -9,6 +9,8 @@ set(SOURCES
   Application/Drivers/UartDriver.h
   Application/Drivers/InterruptTimer1Khz.cpp
   Application/Drivers/InterruptTimer1Khz.h
+  Application/Drivers/InterruptTimer10Khz.cpp
+  Application/Drivers/InterruptTimer10Khz.h
   Application/Initialisation.cpp
   Application/Initialisation.h
 )
