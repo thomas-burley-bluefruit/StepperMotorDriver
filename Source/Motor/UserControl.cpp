@@ -12,7 +12,7 @@ UserControl::UserControl(IStepper& stepper, userinput::IUserButton& button,
 
 void UserControl::OnButtonPress()
 {
-  mStepper.Step(1);
+  mStepper.Move(1);
 }
 
 command::ComponentName UserControl::Name() const
@@ -22,6 +22,6 @@ command::ComponentName UserControl::Name() const
 
 bool UserControl::Run(command::ICommandData& command)
 {
-  mStepper.Step(1);
+  mStepper.Move(1);
   return true;
 }

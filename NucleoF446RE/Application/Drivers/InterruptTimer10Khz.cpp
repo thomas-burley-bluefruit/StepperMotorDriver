@@ -5,7 +5,7 @@
 
 using namespace ::driver;
 
-static IExternalInterruptReceiver* sCallback = nullptr;
+static ITimerInterruptReceiver* sCallback = nullptr;
 
 void InterruptTimer10Khz::Init()
 {
@@ -13,7 +13,7 @@ void InterruptTimer10Khz::Init()
   assert(result == HAL_OK);
 }
 
-void InterruptTimer10Khz::RegisterCallback(IExternalInterruptReceiver* callback)
+void InterruptTimer10Khz::RegisterCallback(ITimerInterruptReceiver* callback)
 {
   sCallback = callback;
 }
@@ -23,5 +23,5 @@ extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
   if (htim->Instance != htim6.Instance || sCallback == nullptr)
     return;
 
-  sCallback->OnExternalInterrupt();
+  sCallback->OnTimerInterrupt();
 }

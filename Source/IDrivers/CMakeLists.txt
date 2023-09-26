@@ -3,7 +3,7 @@ set(NAME IDrivers)
 set(SOURCES
   GpioPin.h
   IButtonPressCallback.h
-  IExternalInterruptReceiver.h
+  ITimerInterruptReceiver.h
   IGpioDriver.h
   IInterruptTimer1Khz.h
   IInterruptTimer10Khz.h

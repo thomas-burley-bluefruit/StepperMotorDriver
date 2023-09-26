@@ -7,7 +7,8 @@ set(SOURCES
   mock.CommandInterpreter.h
   mock.DualChannelMotorDriver.h
   mock.GpioDriver.h
-  mock.InterruptTimer.h
+  mock.InterruptTimer1Khz.h
+  mock.InterruptTimer10Khz.h
   mock.Terminal.h
   mock.TerminalOut.h
   mock.UartDriver.h

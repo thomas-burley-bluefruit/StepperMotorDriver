@@ -9,7 +9,7 @@ class InterruptTimer1Khz final : public IInterruptTimer1Khz
 {
 public:
   void Init();
-  void RegisterCallback(IExternalInterruptReceiver* callback) override;
+  void RegisterCallback(ITimerInterruptReceiver* callback) override;
 };
 
 }

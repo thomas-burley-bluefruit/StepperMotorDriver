@@ -28,7 +28,7 @@ void UserButton::RegisterCallback(IButtonPressCallback* callback)
   mCallbacks[mCallbackCount++] = callback;
 }
 
-void UserButton::OnExternalInterrupt()
+void UserButton::OnTimerInterrupt()
 {
   ++mTickMs;
 

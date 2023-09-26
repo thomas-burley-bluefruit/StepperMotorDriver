@@ -1,6 +1,6 @@
 #include "mock.ButtonPressCallback.h"
 #include "mock.GpioDriver.h"
-#include "mock.InterruptTimer.h"
+#include "mock.InterruptTimer1Khz.h"
 #include "UserButton.h"
 #include "gmock/gmock.h"
 
@@ -20,7 +20,7 @@ public:
 
 protected:
   MockGpioDriver mGpio;
-  MockInterruptTimer mInterruptTimer;
+  MockInterruptTimer1Khz mInterruptTimer;
   UserButton mUserButton;
 
   void TriggerButtonPress()
@@ -28,20 +28,20 @@ protected:
     mGpio.GetReturn = false;
     for (int i = 0; i < UserButton::MinimumOnTimeMs; ++i)
     {
-      mUserButton.OnExternalInterrupt();
+      mUserButton.OnTimerInterrupt();
     }
   }
 
   void ReleaseButton()
   {
     mGpio.GetReturn = true;
-    mUserButton.OnExternalInterrupt();
+    mUserButton.OnTimerInterrupt();
   }
 
   void SatisfyDebouncePeriod()
   {
     for (size_t i = 0; i < UserButton::MinimumIntervalMs; ++i)
-      mUserButton.OnExternalInterrupt();
+      mUserButton.OnTimerInterrupt();
   }
 };
 
@@ -62,11 +62,11 @@ TEST_F(UserButtonTests,
   // When
   for (int i = 0; i < UserButton::MinimumOnTimeMs - 1; ++i)
   {
-    mUserButton.OnExternalInterrupt();
+    mUserButton.OnTimerInterrupt();
     ASSERT_FALSE(callbackSpy.OnButtonPressCalled);
   }
 
-  mUserButton.OnExternalInterrupt();
+  mUserButton.OnTimerInterrupt();
 
   // Then
   ASSERT_TRUE(callbackSpy.OnButtonPressCalled);
@@ -83,7 +83,7 @@ TEST_F(UserButtonTests,
   // When, then
   for (int i = 0; i < UserButton::MinimumOnTimeMs; ++i)
   {
-    mUserButton.OnExternalInterrupt();
+    mUserButton.OnTimerInterrupt();
     ASSERT_FALSE(callbackSpy.OnButtonPressCalled);
   }
 }
@@ -98,15 +98,15 @@ TEST_F(UserButtonTests,
 
   for (int i = 0; i < UserButton::MinimumOnTimeMs - 1; ++i)
   {
-    mUserButton.OnExternalInterrupt();
+    mUserButton.OnTimerInterrupt();
     ASSERT_FALSE(callbackSpy.OnButtonPressCalled);
   }
 
   // When
   mGpio.GetReturn = true;
-  mUserButton.OnExternalInterrupt();
+  mUserButton.OnTimerInterrupt();
   mGpio.GetReturn = false;
-  mUserButton.OnExternalInterrupt();
+  mUserButton.OnTimerInterrupt();
 
   // Then
   ASSERT_FALSE(callbackSpy.OnButtonPressCalled);
@@ -127,12 +127,12 @@ TEST_F(UserButtonTests, Button_is_debounced)
   mGpio.GetReturn = false;
   for (int i = 0; i < UserButton::MinimumIntervalMs - 1; ++i)
   {
-    mUserButton.OnExternalInterrupt();
+    mUserButton.OnTimerInterrupt();
     ASSERT_FALSE(callbackSpy.OnButtonPressCalled);
   }
 
   // Then
-  mUserButton.OnExternalInterrupt();
+  mUserButton.OnTimerInterrupt();
   ASSERT_TRUE(callbackSpy.OnButtonPressCalled);
 }
 

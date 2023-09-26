@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IExternalInterruptReceiver.h"
+#include "ITimerInterruptReceiver.h"
 
 namespace driver
 {
@@ -8,7 +8,7 @@ namespace driver
 class IInterruptTimer1Khz
 {
 public:
-  virtual void RegisterCallback(IExternalInterruptReceiver* callback) = 0;
+  virtual void RegisterCallback(ITimerInterruptReceiver* callback) = 0;
   virtual ~IInterruptTimer1Khz() = default;
 };
 
