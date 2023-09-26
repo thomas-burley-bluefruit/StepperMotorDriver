@@ -18,10 +18,8 @@ void InterruptTimer10Khz::RegisterCallback(ITimerInterruptReceiver* callback)
   sCallback = callback;
 }
 
-extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+void InterruptTimer10Khz_PeriodElapsed()
 {
-  if (htim->Instance != htim6.Instance || sCallback == nullptr)
-    return;
-
-  sCallback->OnTimerInterrupt();
+  if (sCallback != nullptr)
+    sCallback->OnTimerInterrupt();
 }

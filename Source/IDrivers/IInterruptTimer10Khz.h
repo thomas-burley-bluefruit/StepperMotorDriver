@@ -2,6 +2,8 @@
 
 #include "ITimerInterruptReceiver.h"
 
+#include <cstddef>
+
 namespace driver
 {
 

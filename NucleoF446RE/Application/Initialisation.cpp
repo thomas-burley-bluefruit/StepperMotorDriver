@@ -2,6 +2,7 @@
 #include "CommandInterpreter.h"
 #include "CommandRegistry.h"
 #include "GpioDriver.h"
+#include "InterruptTimer10Khz.h"
 #include "InterruptTimer1Khz.h"
 #include "L298n.h"
 #include "Stepper.h"
@@ -51,6 +52,13 @@ driver::IInterruptTimer1Khz& Initialisation::GetInterruptTimer1Khz()
   return interruptTimer1Khz;
 }
 
+driver::IInterruptTimer10Khz& Initialisation::GetInterruptTimer10Khz()
+{
+  static driver::InterruptTimer10Khz interruptTimer10Khz;
+  interruptTimer10Khz.Init();
+  return interruptTimer10Khz;
+}
+
 driver::IUartDriver& Initialisation::GetUartDriver()
 {
   static driver::UartDriver uartDriver;
@@ -65,7 +73,8 @@ motor::IDualChannelMotorDriver& Initialisation::GetDualChannelMotorDriver()
 
 motor::IStepper& Initialisation::GetStepper()
 {
-  static motor::Stepper stepper(GetDualChannelMotorDriver());
+  static motor::Stepper stepper(GetDualChannelMotorDriver(),
+    GetInterruptTimer10Khz());
   return stepper;
 }
 

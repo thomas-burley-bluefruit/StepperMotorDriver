@@ -4,6 +4,7 @@
 #include "ICommandRegistry.h"
 #include "IDualChannelMotorDriver.h"
 #include "IGpioDriver.h"
+#include "IInterruptTimer10Khz.h"
 #include "IInterruptTimer1Khz.h"
 #include "IStepper.h"
 #include "ITerminalIn.h"
@@ -23,6 +24,7 @@ private:
   static command::ICommandRegistry& GetCommandRegistry();
   static driver::IGpioDriver& GetGpioDriver();
   static driver::IInterruptTimer1Khz& GetInterruptTimer1Khz();
+  static driver::IInterruptTimer10Khz& GetInterruptTimer10Khz();
   static driver::IUartDriver& GetUartDriver();
   static motor::IDualChannelMotorDriver& GetDualChannelMotorDriver();
   static motor::IStepper& GetStepper();

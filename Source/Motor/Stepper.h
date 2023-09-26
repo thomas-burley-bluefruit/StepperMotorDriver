@@ -23,7 +23,7 @@ public:
   // ITimerInterruptReceiver
   void OnTimerInterrupt() override;
 
-  static constexpr size_t DefaultStepsPerSecond = 3;
+  static constexpr size_t DefaultStepsPerSecond = 500;
 
 private:
   void Step();

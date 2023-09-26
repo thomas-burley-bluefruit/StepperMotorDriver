@@ -13,3 +13,5 @@ public:
 };
 
 }
+
+extern "C" void InterruptTimer10Khz_PeriodElapsed();
