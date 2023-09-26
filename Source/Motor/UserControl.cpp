@@ -22,6 +22,24 @@ command::ComponentName UserControl::Name() const
 
 bool UserControl::Run(command::ICommandData& command)
 {
-  mStepper.Move(1);
-  return true;
+  if (command.CommandIs(StepCommandName) && command.GetParameterCount() == 1)
+  {
+    uint32_t steps = 0;
+    if (!command.GetUint(StepsParameterName, steps))
+      return false;
+
+    mStepper.Move(steps);
+    return true;
+  }
+
+  if (command.CommandIs(SetCommandName) && command.GetParameterCount() == 1)
+  {
+    uint32_t stepsPerSec = 0;
+    if (!command.GetUint(StepsPerSecParameterName, stepsPerSec))
+      return false;
+
+    mStepper.SetStepsPerSecond(stepsPerSec);
+    return true;
+  }
+  return false;
 }
