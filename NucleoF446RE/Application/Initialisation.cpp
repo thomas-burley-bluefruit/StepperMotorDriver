@@ -2,7 +2,8 @@
 #include "CommandInterpreter.h"
 #include "CommandRegistry.h"
 #include "GpioDriver.h"
-#include "InterruptTimer.h"
+#include "InterruptTimer10Khz.h"
+#include "InterruptTimer1Khz.h"
 #include "L298n.h"
 #include "Stepper.h"
 #include "TerminalIn.h"
@@ -44,11 +45,18 @@ driver::IGpioDriver& Initialisation::GetGpioDriver()
   return gpioDriver;
 }
 
-driver::IInterruptTimer& Initialisation::GetInterruptTimer()
+driver::IInterruptTimer1Khz& Initialisation::GetInterruptTimer1Khz()
 {
-  static driver::InterruptTimer interruptTimer;
-  interruptTimer.Init();
-  return interruptTimer;
+  static driver::InterruptTimer1Khz interruptTimer1Khz;
+  interruptTimer1Khz.Init();
+  return interruptTimer1Khz;
+}
+
+driver::IInterruptTimer10Khz& Initialisation::GetInterruptTimer10Khz()
+{
+  static driver::InterruptTimer10Khz interruptTimer10Khz;
+  interruptTimer10Khz.Init();
+  return interruptTimer10Khz;
 }
 
 driver::IUartDriver& Initialisation::GetUartDriver()
@@ -65,7 +73,8 @@ motor::IDualChannelMotorDriver& Initialisation::GetDualChannelMotorDriver()
 
 motor::IStepper& Initialisation::GetStepper()
 {
-  static motor::Stepper stepper(GetDualChannelMotorDriver());
+  static motor::Stepper stepper(GetDualChannelMotorDriver(),
+    GetInterruptTimer10Khz());
   return stepper;
 }
 
@@ -84,6 +93,7 @@ terminal::ITerminalOut& Initialisation::GetTerminalOut()
 
 userinput::IUserButton& Initialisation::GetUserButton()
 {
-  static userinput::UserButton userButton(GetGpioDriver(), GetInterruptTimer());
+  static userinput::UserButton userButton(GetGpioDriver(),
+    GetInterruptTimer1Khz());
   return userButton;
 }

@@ -29,6 +29,11 @@ public:
     return false;
   }
 
+  bool CallSequenceEq(std::vector<T> calls)
+  {
+    return calls == mParams;
+  }
+
 private:
   std::vector<T> mParams;
 };

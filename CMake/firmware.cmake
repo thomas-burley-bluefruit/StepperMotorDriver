@@ -37,7 +37,11 @@ set(LINK_OPTIONS
   -lm
   -lnosys
   -Wl,-Map=${PROJECT_NAME}.map,--cref
-  -Wl,--gc-sections)
+  -Wl,--gc-sections
+  -uInterruptTimer10Khz_PeriodElapsed
+  -uInterruptTimer1Khz_PeriodElapsed
+  -uHAL_TIM_PeriodElapsedCallback
+)
 target_link_options(${EXECUTABLE} PRIVATE ${LINK_OPTIONS})
 
 set_target_properties(${EXECUTABLE} PROPERTIES ADDITIONAL_CLEAN_FILES

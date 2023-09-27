@@ -7,8 +7,11 @@ set(SOURCES
   Application/Drivers/GpioDriver.h
   Application/Drivers/UartDriver.cpp
   Application/Drivers/UartDriver.h
-  Application/Drivers/InterruptTimer.cpp
-  Application/Drivers/InterruptTimer.h
+  Application/Drivers/InterruptTimerCommon.cpp
+  Application/Drivers/InterruptTimer1Khz.cpp
+  Application/Drivers/InterruptTimer1Khz.h
+  Application/Drivers/InterruptTimer10Khz.cpp
+  Application/Drivers/InterruptTimer10Khz.h
   Application/Initialisation.cpp
   Application/Initialisation.h
 )

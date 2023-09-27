@@ -1,9 +1,9 @@
 #pragma once
 
 #include "IButtonPressCallback.h"
-#include "IExternalInterruptReceiver.h"
 #include "IGpioDriver.h"
-#include "IInterruptTimer.h"
+#include "IInterruptTimer1Khz.h"
+#include "ITimerInterruptReceiver.h"
 #include "IUserButton.h"
 
 #include <cstddef>
@@ -11,13 +11,13 @@
 namespace userinput
 {
 
-class UserButton : public IUserButton, public driver::IExternalInterruptReceiver
+class UserButton : public IUserButton, public driver::ITimerInterruptReceiver
 {
 public:
   UserButton(driver::IGpioDriver& gpio,
-    driver::IInterruptTimer& interruptTimer);
+    driver::IInterruptTimer1Khz& interruptTimer);
   void RegisterCallback(IButtonPressCallback* callback) override;
-  void OnExternalInterrupt() override;
+  void OnTimerInterrupt() override;
 
   static constexpr size_t MinimumOnTimeMs = 10;
   static constexpr size_t MinimumIntervalMs = 50;
@@ -27,7 +27,7 @@ private:
   bool Debounce();
 
   driver::IGpioDriver& mGpio;
-  driver::IInterruptTimer& mInterruptTimer;
+  driver::IInterruptTimer1Khz& mInterruptTimer;
 
   static constexpr driver::GpioPin ButtonGpio = {
     .port = driver::GpioPort::PortC, .pin = 13};
