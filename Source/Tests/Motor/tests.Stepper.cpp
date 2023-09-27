@@ -23,6 +23,11 @@ protected:
       mStepper.OnTimerInterrupt();
   }
 
+  size_t DrpmToStepsPerSec(const size_t speedDrpm)
+  {
+    return ((speedDrpm / 10) / 60) * 200;
+  }
+
   MockDualChannelMotorDriver mMotorDriver;
   MockInterruptTimer10Khz mInterruptTimer;
   Stepper mStepper;
@@ -156,9 +161,8 @@ TEST_F(StepperTests, multiple_steps_performed_before_going_idle)
   ASSERT_TRUE(
     mMotorDriver.SetDirectionCalls.CallSequenceEq(expectedSetDirectionCalls));
 
-  const size_t timerRateHz = 10'000;
   const size_t expectedTimerTicksToNextStep =
-    timerRateHz / Stepper::DefaultStepsPerSecond;
+    mInterruptTimer.GetInterruptRateHz() / Stepper::DefaultStepsPerSecond;
 
   for (size_t i = 0; i < expectedSteps - 1; ++i)
   {
@@ -180,4 +184,60 @@ TEST_F(StepperTests, multiple_steps_performed_before_going_idle)
   SendTimerTicks(expectedTimerTicksToNextStep * 2);
   ASSERT_TRUE(
     mMotorDriver.SetDirectionCalls.CallSequenceEq(expectedSetDirectionCalls));
+}
+
+TEST_F(StepperTests, run_runs_motor_at_specified_drpm)
+{
+  // Given
+  mStepper.Init();
+  mMotorDriver.Reset();
+
+  const size_t speedDrpm = 1000;
+  const size_t expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
+  const size_t expectedTimerTicksPerStep =
+    mInterruptTimer.GetInterruptRateHz() / expectedStepsPerSecond;
+
+  // When
+  mStepper.Run(speedDrpm);
+
+  // Then
+  ASSERT_EQ(expectedStepsPerSecond, mStepper.GetStepsPerSecond());
+  ASSERT_TRUE(mStepper.Running());
+
+  const size_t stepsToCheck = Stepper::StepsPerRotation * 10;
+  const size_t motorDriverCallsPerStep = 2;
+  for (size_t i = 0; i < stepsToCheck; ++i)
+  {
+    SendTimerTicks(expectedTimerTicksPerStep);
+    ASSERT_EQ(motorDriverCallsPerStep * (i + 1),
+      mMotorDriver.SetDirectionCalls.CallCount());
+  }
+}
+
+TEST_F(StepperTests, stop_stops_motor)
+{
+  // Given
+  mStepper.Init();
+  mMotorDriver.Reset();
+
+  const size_t speedDrpm = 1000;
+  const size_t expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
+  const size_t expectedTimerTicksPerStep =
+    mInterruptTimer.GetInterruptRateHz() / expectedStepsPerSecond;
+
+  mStepper.Run(speedDrpm);
+  ASSERT_TRUE(mStepper.Running());
+  const size_t motorDriverCallsPerStep = 2;
+  SendTimerTicks(expectedTimerTicksPerStep);
+  ASSERT_EQ(motorDriverCallsPerStep,
+    mMotorDriver.SetDirectionCalls.CallCount());
+
+  // When
+  mStepper.Stop();
+  SendTimerTicks(expectedTimerTicksPerStep);
+
+  // Then
+  ASSERT_FALSE(mStepper.Running());
+  ASSERT_EQ(motorDriverCallsPerStep,
+    mMotorDriver.SetDirectionCalls.CallCount());
 }

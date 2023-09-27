@@ -21,8 +21,30 @@ void Stepper::Move(const size_t steps)
     return;
 
   Step();
+
+  if (steps == 1)
+    return;
+
   CalculateNextStepTick();
   mStepsPending = steps - 1;
+  mState = StepperState::Moving;
+}
+
+void Stepper::Run(const size_t drpm)
+{
+  const size_t stepsPerSecond = ((drpm / 10) / 60) * StepsPerRotation;
+  SetStepsPerSecond(stepsPerSecond);
+  mState = StepperState::Running;
+}
+
+bool Stepper::Running() const
+{
+  return mState == StepperState::Running;
+}
+
+void Stepper::Stop()
+{
+  mState = StepperState::Idle;
 }
 
 void Stepper::SetStepsPerSecond(const size_t steps)
@@ -55,10 +77,24 @@ void Stepper::CalculateNextStepTick()
 
 void Stepper::OnTimerInterrupt()
 {
-  if (++mTimerTick < mNextStepTick || mStepsPending == 0)
+  if (++mTimerTick < mNextStepTick)
     return;
 
-  Step();
-  --mStepsPending;
-  CalculateNextStepTick();
+  switch (mState)
+  {
+  case StepperState::Moving:
+    if (mStepsPending-- == 0)
+    {
+      mState = StepperState::Idle;
+      return;
+    }
+  case StepperState::Running:
+    Step();
+    CalculateNextStepTick();
+    break;
+
+  case StepperState::Idle:
+  default:
+    break;
+  }
 }

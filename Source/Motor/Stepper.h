@@ -8,6 +8,13 @@
 namespace motor
 {
 
+enum class StepperState
+{
+  Idle,
+  Running,
+  Moving
+};
+
 class Stepper final : public IStepper, public driver::ITimerInterruptReceiver
 {
 public:
@@ -16,6 +23,9 @@ public:
 
   // IStepper
   void Init() override;
+  void Run(const size_t drpm) override;
+  bool Running() const override;
+  void Stop() override;
   void Move(const size_t steps) override;
   void SetStepsPerSecond(const size_t steps) override;
   size_t GetStepsPerSecond() override;
@@ -23,6 +33,7 @@ public:
   // ITimerInterruptReceiver
   void OnTimerInterrupt() override;
 
+  static constexpr size_t StepsPerRotation = 200;
   static constexpr size_t DefaultStepsPerSecond = 500;
 
 private:
@@ -32,6 +43,8 @@ private:
 
 private:
   IDualChannelMotorDriver& mMotorDriver;
+
+  StepperState mState = StepperState::Idle;
   const size_t InterruptRateHz;
   size_t mSequencePos = 0;
   size_t mStepsPerSecond = DefaultStepsPerSecond;

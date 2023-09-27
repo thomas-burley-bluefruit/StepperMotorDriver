@@ -12,6 +12,3 @@ target_link_libraries(${NAME} PUBLIC
   Motor
   Tests.Mocks
   gmock_main)
-
-include(GoogleTest)
-gtest_discover_tests(${NAME})

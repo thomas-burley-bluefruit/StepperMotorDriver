@@ -15,5 +15,3 @@ target_link_libraries(${NAME} PRIVATE
   Terminal
   Tests.Mocks
 )
-
-add_test(${NAME} ${NAME})

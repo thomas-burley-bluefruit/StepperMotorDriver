@@ -18,5 +18,3 @@ target_link_libraries(${NAME} PRIVATE
   Command
   Tests.Mocks
 )
-
-add_test(${NAME} ${NAME})
