@@ -11,6 +11,3 @@ target_link_libraries(${NAME} PUBLIC
   UserButton
   Tests.Mocks
   gmock_main)
-
-include(GoogleTest)
-gtest_discover_tests(${NAME})

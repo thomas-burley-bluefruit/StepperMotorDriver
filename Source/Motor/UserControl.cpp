@@ -41,5 +41,22 @@ bool UserControl::Run(command::ICommandData& command)
     mStepper.SetStepsPerSecond(stepsPerSec);
     return true;
   }
+
+  if (command.CommandIs(RunCommandName) && command.GetParameterCount() == 1)
+  {
+    uint32_t drpm = 0;
+    if (!command.GetUint(DrpmParameterName, drpm))
+      return false;
+
+    mStepper.Run(drpm);
+    return true;
+  }
+
+  if (command.CommandIs(StopCommandName) && command.GetParameterCount() == 0)
+  {
+    mStepper.Stop();
+    return true;
+  }
+
   return false;
 }
