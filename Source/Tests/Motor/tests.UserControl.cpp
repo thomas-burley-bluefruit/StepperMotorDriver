@@ -82,3 +82,33 @@ TEST_F(UserControlTests, set_steps_per_sec_command_sets_sps_on_stepper)
   ASSERT_TRUE(mStepper.SetStepsPerSecondCalled);
   ASSERT_EQ(expectedSteps, mStepper.SetStepsPerSecondSteps);
 }
+
+TEST_F(UserControlTests, run_command_runs_stepper_at_given_speed)
+{
+  // Given
+  MockCommandData command;
+  command.GetCommandReturnValue = UserControl::RunCommandName;
+  const uint32_t expectedSteps = 555;
+  command.Pairs[UserControl::DrpmParameterName] = std::to_string(expectedSteps);
+  command.GetParameterCountReturnValue = 1;
+
+  // When
+  mUserControl.Run(command);
+
+  // Then
+  ASSERT_TRUE(mStepper.RunCalled);
+  ASSERT_EQ(expectedSteps, mStepper.RunDrpm);
+}
+
+TEST_F(UserControlTests, stop_command_stops_motor)
+{
+  // Given
+  MockCommandData command;
+  command.GetCommandReturnValue = UserControl::StopCommandName;
+
+  // When
+  mUserControl.Run(command);
+
+  // Then
+  ASSERT_TRUE(mStepper.StopCalled);
+}

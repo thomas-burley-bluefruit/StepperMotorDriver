@@ -32,7 +32,7 @@ void Stepper::Move(const size_t steps)
 
 void Stepper::Run(const size_t drpm)
 {
-  const size_t stepsPerSecond = ((drpm / 10) / 60) * StepsPerRotation;
+  const size_t stepsPerSecond = ((drpm / 10) / 60.0f) * StepsPerRotation;
   SetStepsPerSecond(stepsPerSecond);
   mState = StepperState::Running;
 }
