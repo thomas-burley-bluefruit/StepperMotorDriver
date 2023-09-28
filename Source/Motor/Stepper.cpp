@@ -44,7 +44,7 @@ bool Stepper::Running() const
 
 void Stepper::Stop()
 {
-  mState = StepperState::Idle;
+  mState = StepperState::Stopped;
 }
 
 void Stepper::SetStepsPerSecond(const size_t steps)
@@ -85,7 +85,7 @@ void Stepper::OnTimerInterrupt()
   case StepperState::Moving:
     if (mStepsPending-- == 0)
     {
-      mState = StepperState::Idle;
+      mState = StepperState::Stopped;
       return;
     }
   case StepperState::Running:
@@ -93,7 +93,7 @@ void Stepper::OnTimerInterrupt()
     CalculateNextStepTick();
     break;
 
-  case StepperState::Idle:
+  case StepperState::Stopped:
   default:
     break;
   }

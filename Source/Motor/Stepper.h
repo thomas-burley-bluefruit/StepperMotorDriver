@@ -10,7 +10,7 @@ namespace motor
 
 enum class StepperState
 {
-  Idle,
+  Stopped,
   Running,
   Moving
 };
@@ -44,7 +44,7 @@ private:
 private:
   IDualChannelMotorDriver& mMotorDriver;
 
-  StepperState mState = StepperState::Idle;
+  StepperState mState = StepperState::Stopped;
   const size_t InterruptRateHz;
   size_t mSequencePos = 0;
   size_t mStepsPerSecond = DefaultStepsPerSecond;
