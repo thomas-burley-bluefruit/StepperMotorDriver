@@ -18,6 +18,7 @@ public:
   bool Ramping() const;
 
 private:
+  bool mRamping = false;
   size_t mStartTick = 0;
   size_t mSlopeEndTick = 0;
   float mRampRatePerSecond = 0;

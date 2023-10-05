@@ -1,5 +1,8 @@
 #include "SpeedRamping.h"
 
+#include <algorithm>
+#include <cmath>
+
 using namespace ::motor;
 
 void SpeedRamping::Init(const float startSpeed, const float targetSpeed,
@@ -9,15 +12,20 @@ void SpeedRamping::Init(const float startSpeed, const float targetSpeed,
   mTargetSpeed = targetSpeed;
   mSpeedRange = mTargetSpeed - mStartSpeed;
   mStartTick = tick10Khz;
-  mSlopeEndTick = mStartTick
-    + ((static_cast<float>(mSpeedRange) / mRampRatePerSecond) * 10'000);
+  mSlopeEndTick =
+    mStartTick + abs(((mSpeedRange / mRampRatePerSecond) * 10'000));
+  mRamping = true;
 }
 
 void SpeedRamping::Update(const size_t tick10Khz)
 {
-  const float rampPosition = (static_cast<float>(tick10Khz) - mStartTick)
-    / (static_cast<float>(mSlopeEndTick) - mStartTick);
-  mCurrentSpeed = mStartSpeed + rampPosition * mSpeedRange;
+  const float rampPosition =
+    std::min((static_cast<float>(tick10Khz) - mStartTick)
+        / (static_cast<float>(mSlopeEndTick) - mStartTick),
+      1.0f);
+  mCurrentSpeed = mStartSpeed + (rampPosition * mSpeedRange);
+  if (mCurrentSpeed == mTargetSpeed)
+    mRamping = false;
 }
 
 void SpeedRamping::SetRampRate(float speedUnitsPerSecond)
@@ -37,5 +45,5 @@ float SpeedRamping::GetSpeed()
 
 bool SpeedRamping::Ramping() const
 {
-  return mCurrentSpeed < mTargetSpeed;
+  return mRamping;
 }

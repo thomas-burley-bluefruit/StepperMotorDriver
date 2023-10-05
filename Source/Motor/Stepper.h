@@ -42,7 +42,7 @@ public:
 
   static constexpr size_t StepsPerRotation = 200;
   static constexpr size_t DefaultStepsPerSecond = 500;
-  static constexpr size_t DefaultRampRateStepsPerSecondSquared = 50;
+  static constexpr size_t DefaultRampRateStepsPerSecondSquared = 150;
 
 private:
   void Step();

@@ -1,8 +1,9 @@
 #include "FullStepSequence.h"
-#include "mock.DualChannelMotorDriver.h"
 #include "mock.InterruptTimer10Khz.h"
 #include "Stepper.h"
 #include "gmock/gmock.h"
+
+#include <algorithm>
 
 using namespace ::driver;
 using namespace ::motor;
@@ -12,7 +13,7 @@ class StepperRampingTests : public Test
 {
 public:
   StepperRampingTests() :
-    mStepper(mMotorDriver, mInterruptTimer)
+    mStepper(mInterruptTimer)
   {
   }
 
@@ -28,7 +29,19 @@ protected:
     return ((speedDrpm / 10) / 60) * 200;
   }
 
-  MockDualChannelMotorDriver mMotorDriver;
+  void Ramp(const int32_t drpmTo)
+  {
+    const int32_t speedDifference = mStepper.GetRunSpeedDrpm() - drpmTo;
+    const size_t expectedTicksTilRampEnd =
+      abs(static_cast<float>(speedDifference)
+        / mStepper.GetRampRateDrpmPerSecond())
+      * static_cast<int32_t>(mInterruptTimer.GetInterruptRateHz());
+
+    mStepper.Run(drpmTo);
+
+    SendTimerTicks(expectedTicksTilRampEnd);
+  }
+
   MockInterruptTimer10Khz mInterruptTimer;
   Stepper mStepper;
 };
@@ -127,7 +140,7 @@ TEST_F(StepperRampingTests, speed_decrease_is_ramped_at_default_rate)
   const int32_t targetSpeedDrpm = 0;
   const int32_t speedDifference = targetSpeedDrpm - startingSpeedDrpm;
   const size_t expectedSecondsTilRampEnd =
-    speedDifference / rampRateDrpmPerSecond;
+    abs(speedDifference / static_cast<int32_t>(rampRateDrpmPerSecond));
 
   int32_t currentSpeedDrpm = startingSpeedDrpm;
 
@@ -140,7 +153,64 @@ TEST_F(StepperRampingTests, speed_decrease_is_ramped_at_default_rate)
   for (size_t i = 0; i < expectedSecondsTilRampEnd; ++i)
   {
     SendTimerTicks(ticksPerSecond);
-    currentSpeedDrpm += rampRateDrpmPerSecond;
+    currentSpeedDrpm =
+      std::max(static_cast<int32_t>(currentSpeedDrpm - rampRateDrpmPerSecond),
+        targetSpeedDrpm);
     ASSERT_EQ(currentSpeedDrpm, mStepper.GetRunSpeedDrpm());
   }
+}
+
+TEST_F(StepperRampingTests, speed_decrease_past_zero_boundary)
+{
+  // Given
+  const auto rampRateDrpmPerSecond = mStepper.GetRampRateDrpmPerSecond();
+
+  const int32_t startingSpeedDrpm = 1000;
+  mStepper.EnableRamping(false);
+  mStepper.Run(startingSpeedDrpm);
+  mStepper.OnTimerInterrupt();
+  ASSERT_EQ(startingSpeedDrpm, mStepper.GetRunSpeedDrpm());
+
+  mStepper.EnableRamping(true);
+
+  const int32_t targetSpeedDrpm = -1000;
+  const int32_t speedDifference = targetSpeedDrpm - startingSpeedDrpm;
+  const size_t expectedSecondsTilRampEnd =
+    abs(speedDifference / static_cast<int32_t>(rampRateDrpmPerSecond));
+
+  int32_t currentSpeedDrpm = startingSpeedDrpm;
+
+  // When
+  mStepper.Run(targetSpeedDrpm);
+
+  // Then
+  const size_t ticksPerSecond = mInterruptTimer.GetInterruptRateHz();
+
+  for (size_t i = 0; i < expectedSecondsTilRampEnd; ++i)
+  {
+    SendTimerTicks(ticksPerSecond);
+    currentSpeedDrpm =
+      std::max(static_cast<int32_t>(currentSpeedDrpm - rampRateDrpmPerSecond),
+        targetSpeedDrpm);
+    ASSERT_EQ(currentSpeedDrpm, mStepper.GetRunSpeedDrpm());
+  }
+}
+
+TEST_F(StepperRampingTests, sequence_of_speeds_while_running)
+{
+  int32_t targetSpeed = 1000;
+  Ramp(targetSpeed);
+  ASSERT_EQ(targetSpeed, mStepper.GetRunSpeedDrpm());
+
+  targetSpeed = 1500;
+  Ramp(targetSpeed);
+  ASSERT_EQ(targetSpeed, mStepper.GetRunSpeedDrpm());
+
+  targetSpeed = 1200;
+  Ramp(targetSpeed);
+  ASSERT_EQ(targetSpeed, mStepper.GetRunSpeedDrpm());
+
+  targetSpeed = -1000;
+  Ramp(targetSpeed);
+  ASSERT_EQ(targetSpeed, mStepper.GetRunSpeedDrpm());
 }
