@@ -16,7 +16,7 @@ public:
     MoveSteps = steps;
   }
 
-  void Run(const size_t drpm) override
+  void Run(const int32_t drpm) override
   {
     RunCalled = true;
     RunDrpm = drpm;
@@ -43,10 +43,17 @@ public:
     return 0;
   }
 
+  void SetRampRate(const size_t drpmSquared) override {}
+
+  size_t GetRampRateDrpmPerSecond() const override
+  {
+    return 0;
+  }
+
   bool MoveCalled = false;
   size_t MoveSteps = 0;
   bool RunCalled = false;
-  size_t RunDrpm = 0;
+  int32_t RunDrpm = 0;
   bool StopCalled = false;
   bool SetStepsPerSecondCalled = false;
   size_t SetStepsPerSecondSteps = 0;

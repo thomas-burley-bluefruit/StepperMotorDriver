@@ -23,9 +23,9 @@ protected:
       mStepper.OnTimerInterrupt();
   }
 
-  size_t DrpmToStepsPerSec(const size_t speedDrpm)
+  float DrpmToStepsPerSec(const size_t speedDrpm)
   {
-    return ((speedDrpm / 10) / 60) * 200;
+    return ((speedDrpm / 10.0f) / 60.0f) * 200.0f;
   }
 
   MockDualChannelMotorDriver mMotorDriver;
@@ -191,17 +191,18 @@ TEST_F(StepperTests, run_runs_motor_at_specified_drpm)
   // Given
   mStepper.Init();
   mMotorDriver.Reset();
+  mStepper.EnableRamping(false);
 
   const size_t speedDrpm = 1000;
-  const size_t expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
-  const size_t expectedTimerTicksPerStep =
-    mInterruptTimer.GetInterruptRateHz() / expectedStepsPerSecond;
+  const auto expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
+  const auto expectedTimerTicksPerStep = static_cast<size_t>(
+    mInterruptTimer.GetInterruptRateHz() / expectedStepsPerSecond);
 
   // When
   mStepper.Run(speedDrpm);
 
   // Then
-  ASSERT_EQ(expectedStepsPerSecond, mStepper.GetStepsPerSecond());
+  ASSERT_EQ(speedDrpm, mStepper.GetRunSpeedDrpm());
   ASSERT_TRUE(mStepper.Running());
 
   const size_t stepsToCheck = Stepper::StepsPerRotation * 10;
@@ -219,6 +220,7 @@ TEST_F(StepperTests, stop_stops_motor)
   // Given
   mStepper.Init();
   mMotorDriver.Reset();
+  mStepper.EnableRamping(false);
 
   const size_t speedDrpm = 1000;
   const size_t expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);

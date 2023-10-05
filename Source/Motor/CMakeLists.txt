@@ -8,6 +8,8 @@ set(SOURCES
   L298n.h
   Stepper.cpp
   Stepper.h
+  SpeedRamping.cpp
+  SpeedRamping.h
   UserControl.cpp
   UserControl.h
 )
