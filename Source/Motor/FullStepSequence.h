@@ -10,8 +10,8 @@ namespace motor
 
 struct StepState
 {
-  Direction ChannelADirection = Direction::Off;
-  Direction ChannelBDirection = Direction::Off;
+  driver::Direction ChannelADirection = driver::Direction::Off;
+  driver::Direction ChannelBDirection = driver::Direction::Off;
 };
 
 class FullStepSequence
@@ -27,10 +27,10 @@ public:
 
 private:
   static constexpr StepState Sequence[StepsInSequence] = {
-    {Direction::Forward, Direction::Forward},
-    {Direction::Reverse, Direction::Forward},
-    {Direction::Reverse, Direction::Reverse},
-    {Direction::Forward, Direction::Reverse},
+    {driver::Direction::Forward, driver::Direction::Forward},
+    {driver::Direction::Reverse, driver::Direction::Forward},
+    {driver::Direction::Reverse, driver::Direction::Reverse},
+    {driver::Direction::Forward, driver::Direction::Reverse},
   };
 } static const sFullStepSequence;
 

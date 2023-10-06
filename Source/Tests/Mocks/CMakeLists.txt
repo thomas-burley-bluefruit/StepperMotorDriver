@@ -12,6 +12,7 @@ set(SOURCES
   Drivers/mock.UartDriver.h
   MockCalls.h
   Motor/mock.Stepper.h
+  Motor/mock.StepperDriver.h
   Terminal/mock.Terminal.h
   Terminal/mock.TerminalOut.h
   UserInput/mock.ButtonPressCallback.h

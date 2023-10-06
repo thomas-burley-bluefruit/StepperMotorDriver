@@ -4,12 +4,15 @@ enable_language(C CXX)
 set(SOURCES
   FullStepSequence.h
   IStepper.h
+  IStepperDriver.h
   L298n.cpp
   L298n.h
-  Stepper.cpp
-  Stepper.h
   SpeedRamping.cpp
   SpeedRamping.h
+  Stepper.cpp
+  Stepper.h
+  StepperDriver.cpp
+  StepperDriver.h
   UserControl.cpp
   UserControl.h
 )
