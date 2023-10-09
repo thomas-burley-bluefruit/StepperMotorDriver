@@ -1,5 +1,6 @@
 #include "FullStepSequence.h"
 #include "mock.InterruptTimer10Khz.h"
+#include "mock.StepperDriver.h"
 #include "Stepper.h"
 #include "gmock/gmock.h"
 
@@ -13,7 +14,7 @@ class StepperRampingTests : public Test
 {
 public:
   StepperRampingTests() :
-    mStepper(mInterruptTimer)
+    mStepper(mStepperDriver, mInterruptTimer)
   {
   }
 
@@ -42,6 +43,7 @@ protected:
     SendTimerTicks(expectedTicksTilRampEnd);
   }
 
+  MockStepperDriver mStepperDriver;
   MockInterruptTimer10Khz mInterruptTimer;
   Stepper mStepper;
 };

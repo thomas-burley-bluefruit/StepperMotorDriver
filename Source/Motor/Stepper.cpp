@@ -2,20 +2,18 @@
 #include <cmath>
 
 using namespace ::motor;
+using namespace ::driver;
 
-Stepper::Stepper(IDualChannelMotorDriver& motorDriver,
+Stepper::Stepper(IStepperDriver& stepperDriver,
   driver::IInterruptTimer10Khz& interruptTimer10Khz) :
-  mMotorDriver(motorDriver),
+  mStepperDriver(stepperDriver),
   InterruptRateHz(interruptTimer10Khz.GetInterruptRateHz())
 {
   interruptTimer10Khz.RegisterCallback(this);
   mSpeedRamping.SetRampRate(DefaultRampRateStepsPerSecondSquared);
 }
 
-void Stepper::Init()
-{
-  SetStepState(sFullStepSequence[0]);
-}
+void Stepper::Init() {}
 
 void Stepper::EnableRamping(const bool enable)
 {
@@ -33,7 +31,7 @@ void Stepper::Move(const size_t steps)
   if (steps == 0)
     return;
 
-  Step();
+  mStepperDriver.Step(Direction::Forward);
 
   if (steps == 1)
     return;
@@ -90,18 +88,6 @@ size_t Stepper::GetRampRateDrpmPerSecond() const
     roundf(StepsPerSecondToDrpm(mSpeedRamping.GetRampRate())));
 }
 
-void Stepper::Step()
-{
-  mSequencePos = (mSequencePos + 1) % FullStepSequence::StepsInSequence;
-  SetStepState(sFullStepSequence[mSequencePos]);
-}
-
-void Stepper::SetStepState(const StepState& state) const
-{
-  mMotorDriver.SetChannelDirection(Channel::A, state.ChannelADirection);
-  mMotorDriver.SetChannelDirection(Channel::B, state.ChannelBDirection);
-}
-
 void Stepper::CalculateNextStepTick(const size_t stepsPerSecond)
 {
   if (stepsPerSecond == 0)
@@ -133,7 +119,7 @@ void Stepper::OnTimerInterrupt()
     if (mTimerTick < mNextStepTick)
       break;
 
-    Step();
+    mStepperDriver.Step(Direction::Forward);
     CalculateNextStepTick(static_cast<size_t>(roundf(mRunningStepsPerSecond)));
     if (!mSpeedRamping.Ramping())
       mState = StepperState::Running;
@@ -147,7 +133,7 @@ void Stepper::OnTimerInterrupt()
       mState = StepperState::Stopped;
       return;
     }
-    Step();
+    mStepperDriver.Step(Direction::Forward);
     CalculateNextStepTick(mMovingStepsPerSecond);
     break;
 
@@ -155,7 +141,7 @@ void Stepper::OnTimerInterrupt()
     if (mTimerTick < mNextStepTick)
       break;
     CalculateNextStepTick(static_cast<size_t>(roundf(mRunningStepsPerSecond)));
-    Step();
+    mStepperDriver.Step(Direction::Forward);
     break;
 
   case StepperState::Stopped:
