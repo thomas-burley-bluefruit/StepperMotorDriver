@@ -13,6 +13,10 @@ set(SOURCES
   Stepper.h
   StepperDriver.cpp
   StepperDriver.h
+  StepperMove.cpp
+  StepperMove.h
+  StepperUtility.cpp
+  StepperUtility.h
   UserControl.cpp
   UserControl.h
 )

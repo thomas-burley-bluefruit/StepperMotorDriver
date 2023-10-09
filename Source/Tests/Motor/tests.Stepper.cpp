@@ -61,7 +61,7 @@ double_step_performs_second_step_on_the_timer_tick_after_the_period_between_step
 
   const size_t timerRateHz = 10'000;
   const size_t expectedTimerTicksToNextStep =
-    timerRateHz / Stepper::DefaultStepsPerSecond;
+    timerRateHz / mStepper.GetStepsPerSecond();
 
   SendTimerTicks(expectedTimerTicksToNextStep - 1);
 
@@ -88,7 +88,7 @@ TEST_F(StepperTests, multiple_steps_performed_before_going_idle)
   ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
 
   const size_t expectedTimerTicksToNextStep =
-    mInterruptTimer.GetInterruptRateHz() / Stepper::DefaultStepsPerSecond;
+    mInterruptTimer.GetInterruptRateHz() / mStepper.GetStepsPerSecond();
 
   while (expectedStepsPerformed < expectedSteps)
   {

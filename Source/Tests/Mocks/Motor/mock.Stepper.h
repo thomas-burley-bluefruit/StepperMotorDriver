@@ -8,8 +8,6 @@ namespace motor
 class MockStepper final : public IStepper
 {
 public:
-  void Init() override {}
-
   void Move(const size_t steps) override
   {
     MoveCalled = true;
@@ -38,7 +36,7 @@ public:
     SetStepsPerSecondSteps = steps;
   }
 
-  size_t GetStepsPerSecond() override
+  size_t GetStepsPerSecond() const override
   {
     return 0;
   }
