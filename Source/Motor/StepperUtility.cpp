@@ -9,13 +9,13 @@ StepperUtility::StepperUtility(const size_t interruptRateHz,
 {
 }
 
-size_t StepperUtility::GetNextStepTick(const size_t stepsPerSecond,
-  const size_t currentTick)
+size_t StepperUtility::GetNextStepTick(const float stepsPerSecond,
+  const size_t lastStepTick)
 {
-  if (stepsPerSecond == 0)
+  if (stepsPerSecond == 0.0f)
     return 0;
   const size_t ticksPerStep = InterruptRateHz / stepsPerSecond;
-  return currentTick + ticksPerStep;
+  return lastStepTick + ticksPerStep;
 }
 
 float StepperUtility::DrpmToStepsPerSecond(const float drpm) const

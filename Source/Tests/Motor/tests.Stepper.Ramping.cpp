@@ -32,7 +32,7 @@ protected:
 
   void Ramp(const int32_t drpmTo)
   {
-    const int32_t speedDifference = mStepper.GetRunSpeedDrpm() - drpmTo;
+    const int32_t speedDifference = drpmTo - mStepper.GetRunSpeedDrpm();
     const size_t expectedTicksTilRampEnd =
       abs(static_cast<float>(speedDifference)
         / mStepper.GetRampRateDrpmPerSecond())
@@ -215,4 +215,20 @@ TEST_F(StepperRampingTests, sequence_of_speeds_while_running)
   targetSpeed = -1000;
   Ramp(targetSpeed);
   ASSERT_EQ(targetSpeed, mStepper.GetRunSpeedDrpm());
+}
+
+TEST_F(StepperRampingTests, resuming_after_stop_ramps_from_0drpm)
+{
+  // Given
+  int32_t targetSpeed = 1000;
+  Ramp(targetSpeed);
+  ASSERT_EQ(targetSpeed, mStepper.GetRunSpeedDrpm());
+
+  mStepper.Stop();
+
+  // When
+  mStepper.Run(targetSpeed);
+
+  // Then
+  ASSERT_EQ(0, mStepper.GetRunSpeedDrpm());
 }

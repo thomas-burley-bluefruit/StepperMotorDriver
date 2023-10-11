@@ -13,6 +13,7 @@ public:
   StepperDriver(driver::IDualChannelMotorDriver& motorDriver);
   void Step(const Direction direction) override;
   void StopHiZ() override;
+  size_t GetStepsPerRotation() const override;
 
 private:
   void SetStepState(const StepState& state) const;
@@ -21,6 +22,7 @@ private:
 private:
   driver::IDualChannelMotorDriver& mMotorDriver;
 
+  static constexpr size_t StepsPerRotation = 200;
   size_t mSequencePos = 0;
   bool mEnergised = false;
 };

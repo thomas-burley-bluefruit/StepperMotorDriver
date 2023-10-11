@@ -7,6 +7,7 @@
 #include "IInterruptTimer10Khz.h"
 #include "IInterruptTimer1Khz.h"
 #include "IStepper.h"
+#include "IStepperDriver.h"
 #include "ITerminalIn.h"
 #include "ITerminalOut.h"
 #include "IUartDriver.h"
@@ -26,8 +27,9 @@ private:
   static driver::IInterruptTimer1Khz& GetInterruptTimer1Khz();
   static driver::IInterruptTimer10Khz& GetInterruptTimer10Khz();
   static driver::IUartDriver& GetUartDriver();
-  static motor::IDualChannelMotorDriver& GetDualChannelMotorDriver();
+  static driver::IDualChannelMotorDriver& GetDualChannelMotorDriver();
   static motor::IStepper& GetStepper();
+  static motor::IStepperDriver& GetStepperDriver();
   static motor::UserControl& GetUserControl();
   static terminal::ITerminalOut& GetTerminalOut();
   static userinput::IUserButton& GetUserButton();

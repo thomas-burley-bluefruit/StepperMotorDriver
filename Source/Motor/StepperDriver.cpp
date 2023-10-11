@@ -23,6 +23,11 @@ void StepperDriver::StopHiZ()
   mEnergised = false;
 }
 
+size_t StepperDriver::GetStepsPerRotation() const
+{
+  return StepsPerRotation;
+}
+
 void StepperDriver::SetStepState(const StepState& state) const
 {
   mMotorDriver.SetChannelDirection(driver::Channel::A, state.ChannelADirection);

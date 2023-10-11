@@ -119,7 +119,7 @@ TEST_F(StepperTests, run_runs_motor_at_specified_drpm)
   ASSERT_EQ(speedDrpm, mStepper.GetRunSpeedDrpm());
   ASSERT_TRUE(mStepper.Running());
 
-  const size_t stepsToCheck = Stepper::StepsPerRotation * 10;
+  const size_t stepsToCheck = mStepper.GetStepsPerRotation() * 10;
   for (size_t i = 0; i < stepsToCheck; ++i)
   {
     SendTimerTicks(expectedTimerTicksPerStep);

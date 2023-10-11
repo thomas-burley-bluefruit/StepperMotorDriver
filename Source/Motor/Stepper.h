@@ -6,17 +6,11 @@
 #include "IStepperDriver.h"
 #include "SpeedRamping.h"
 #include "StepperMove.h"
+#include "StepperRun.h"
 #include "StepperUtility.h"
 
 namespace motor
 {
-
-enum class StepperState
-{
-  Stopped,
-  Ramping,
-  Running
-};
 
 class Stepper final : public IStepper, public driver::ITimerInterruptReceiver
 {
@@ -26,6 +20,7 @@ public:
 
   void EnableRamping(const bool enable);
   size_t GetRunSpeedDrpm() const;
+  size_t GetStepsPerRotation() const;
 
   // IStepper
   void Run(const int32_t drpm) override;
@@ -40,21 +35,13 @@ public:
   // ITimerInterruptReceiver
   void OnTimerInterrupt() override;
 
-  static constexpr size_t StepsPerRotation = 200;
-  static constexpr size_t DefaultRampRateStepsPerSecondSquared = 150;
-
-private:
 private:
   IStepperDriver& mStepperDriver;
   StepperUtility mStepperUtility;
-  SpeedRamping mSpeedRamping;
   StepperMove mStepperMove;
+  StepperRun mStepperRun;
 
-  StepperState mState = StepperState::Stopped;
-  float mRunningStepsPerSecond = 0;
   size_t mTimerTick = 0;
-  size_t mNextStepTick = 0;
-  bool mRampingEnabled = true;
 };
 
 }
