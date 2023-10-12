@@ -57,8 +57,8 @@ bool CommandData::AddKeyValuePair(const KeyValuePair& pair)
   if (mPairCount >= MaxKeyValuePairs)
     return false;
 
-  if (!std::isalnum(mRawInput[pair.KeyIndex])
-    || !std::isalnum(mRawInput[pair.ValueIndex]))
+  if (!IsValidChar(mRawInput[pair.KeyIndex])
+    || !IsValidChar(mRawInput[pair.ValueIndex]))
     return false;
 
   if (mPairCount >= MandatoryPairCount && DuplicateKeyExists(pair))
@@ -106,6 +106,30 @@ bool CommandData::GetUint(const char* key, uint32_t& outInt) const
   return true;
 }
 
+bool CommandData::GetInt(const char* key, int32_t& outInt) const
+{
+  size_t valueIndex = 0;
+  if (!GetValueIndex(key, valueIndex))
+    return false;
+
+  const char* valueString = &mRawInput[valueIndex];
+  const auto firstChar = valueString[0];
+
+  if (!std::isdigit(firstChar) && firstChar != '-')
+    return false;
+
+  const uint32_t base = 10;
+  char* nextChar = nullptr;
+  outInt = strtol(valueString, &nextChar, base);
+
+  if (*nextChar != '\0')
+  { // Ensure int is not part of a word
+    return false;
+  }
+
+  return true;
+}
+
 bool CommandData::GetValueIndex(const char* key, size_t& outIndex) const
 {
   for (size_t i = 0; i < mPairCount; ++i)
@@ -129,4 +153,9 @@ bool CommandData::DuplicateKeyExists(const KeyValuePair& pair) const
       return true;
   }
   return false;
+}
+
+bool CommandData::IsValidChar(const char& c) const
+{
+  return std::isalnum(c) || std::ispunct(c);
 }

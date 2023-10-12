@@ -10,6 +10,7 @@ class ICommandData
 public:
   virtual bool GetString(const char* key, const char*& outString) const = 0;
   virtual bool GetUint(const char* key, uint32_t& outInt) const = 0;
+  virtual bool GetInt(const char* key, int32_t& outInt) const = 0;
   virtual ComponentName GetComponentName() const = 0;
   virtual const char* GetCommand() const = 0;
   virtual bool CommandIs(const char* command) const = 0;

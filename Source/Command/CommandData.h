@@ -30,6 +30,7 @@ public:
   // ICommandData
   bool GetString(const char* key, const char*& outString) const override;
   bool GetUint(const char* key, uint32_t& outInt) const override;
+  bool GetInt(const char* key, int32_t& outInt) const override;
   ComponentName GetComponentName() const override;
   const char* GetCommand() const override;
   bool CommandIs(const char* command) const override;
@@ -53,6 +54,7 @@ private:
 
   bool GetValueIndex(const char* key, size_t& outIndex) const;
   bool DuplicateKeyExists(const KeyValuePair& pair) const;
+  bool IsValidChar(const char& c) const;
 };
 
 }
