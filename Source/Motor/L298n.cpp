@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-using namespace ::motor;
+using namespace ::driver;
 
 L298n::L298n(driver::IGpioDriver& gpio) :
   mGpio(gpio)

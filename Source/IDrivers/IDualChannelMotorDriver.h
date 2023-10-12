@@ -1,6 +1,6 @@
 #pragma once
 
-namespace motor
+namespace driver
 {
 
 enum class Channel

@@ -1,56 +1,48 @@
 #pragma once
 
-#include "FullStepSequence.h"
 #include "IDualChannelMotorDriver.h"
 #include "IInterruptTimer10Khz.h"
 #include "IStepper.h"
+#include "IStepperDriver.h"
+#include "SpeedRamping.h"
+#include "StepperMove.h"
+#include "StepperRun.h"
+#include "StepperUtility.h"
 
 namespace motor
 {
 
-enum class StepperState
-{
-  Stopped,
-  Running,
-  Moving
-};
-
 class Stepper final : public IStepper, public driver::ITimerInterruptReceiver
 {
 public:
-  Stepper(IDualChannelMotorDriver& motorDriver,
+  Stepper(IStepperDriver& stepperDriver,
     driver::IInterruptTimer10Khz& interruptTimer10Khz);
 
+  void EnableRamping(const bool enable);
+  size_t GetRunSpeedDrpm() const;
+  size_t GetStepsPerRotation() const;
+
   // IStepper
-  void Init() override;
-  void Run(const size_t drpm) override;
+  void Run(const int32_t drpm) override;
   bool Running() const override;
   void Stop() override;
+  void StopHiZ() override;
   void Move(const size_t steps) override;
   void SetStepsPerSecond(const size_t steps) override;
-  size_t GetStepsPerSecond() override;
+  size_t GetStepsPerSecond() const override;
+  void SetRampRate(const size_t drpmPerSecond) override;
+  size_t GetRampRateDrpmPerSecond() const override;
 
   // ITimerInterruptReceiver
   void OnTimerInterrupt() override;
 
-  static constexpr size_t StepsPerRotation = 200;
-  static constexpr size_t DefaultStepsPerSecond = 500;
-
 private:
-  void Step();
-  void SetStepState(const StepState& state) const;
-  void CalculateNextStepTick();
+  IStepperDriver& mStepperDriver;
+  StepperUtility mStepperUtility;
+  StepperMove mStepperMove;
+  StepperRun mStepperRun;
 
-private:
-  IDualChannelMotorDriver& mMotorDriver;
-
-  StepperState mState = StepperState::Stopped;
-  const size_t InterruptRateHz;
-  size_t mSequencePos = 0;
-  size_t mStepsPerSecond = DefaultStepsPerSecond;
   size_t mTimerTick = 0;
-  size_t mNextStepTick = 0;
-  size_t mStepsPending = 0;
 };
 
 }

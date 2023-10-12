@@ -3,7 +3,6 @@
 #include "gmock/gmock.h"
 
 using namespace ::driver;
-using namespace ::motor;
 
 class L298nTests : public ::testing::Test
 {

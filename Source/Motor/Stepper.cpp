@@ -1,100 +1,85 @@
 #include "Stepper.h"
+#include <cmath>
 
 using namespace ::motor;
+using namespace ::driver;
 
-Stepper::Stepper(IDualChannelMotorDriver& motorDriver,
+Stepper::Stepper(IStepperDriver& stepperDriver,
   driver::IInterruptTimer10Khz& interruptTimer10Khz) :
-  mMotorDriver(motorDriver),
-  InterruptRateHz(interruptTimer10Khz.GetInterruptRateHz())
+  mStepperDriver(stepperDriver),
+  mStepperUtility(interruptTimer10Khz.GetInterruptRateHz(),
+    stepperDriver.GetStepsPerRotation()),
+  mStepperMove(mStepperDriver, mStepperUtility),
+  mStepperRun(mStepperDriver, mStepperUtility)
 {
   interruptTimer10Khz.RegisterCallback(this);
 }
 
-void Stepper::Init()
+void Stepper::EnableRamping(const bool enable)
 {
-  SetStepState(sFullStepSequence[0]);
+  mStepperRun.EnableRamping(enable);
+}
+
+size_t Stepper::GetRunSpeedDrpm() const
+{
+  return mStepperRun.GetRunSpeedDrpm();
+}
+
+size_t Stepper::GetStepsPerRotation() const
+{
+  return mStepperDriver.GetStepsPerRotation();
 }
 
 void Stepper::Move(const size_t steps)
 {
-  if (steps == 0)
-    return;
-
-  Step();
-
-  if (steps == 1)
-    return;
-
-  CalculateNextStepTick();
-  mStepsPending = steps - 1;
-  mState = StepperState::Moving;
+  mStepperMove.Move(steps);
 }
 
-void Stepper::Run(const size_t drpm)
+void Stepper::Run(const int32_t drpm)
 {
-  const size_t stepsPerSecond = ((drpm / 10) / 60.0f) * StepsPerRotation;
-  SetStepsPerSecond(stepsPerSecond);
-  mState = StepperState::Running;
+  mStepperRun.Run(drpm);
 }
 
 bool Stepper::Running() const
 {
-  return mState == StepperState::Running;
+  return mStepperRun.Running();
 }
 
 void Stepper::Stop()
 {
-  mState = StepperState::Stopped;
+  mStepperRun.Stop();
+}
+
+void Stepper::StopHiZ()
+{
+  mStepperRun.Stop();
+  mStepperDriver.StopHiZ();
 }
 
 void Stepper::SetStepsPerSecond(const size_t steps)
 {
-  mStepsPerSecond = steps;
+  mStepperMove.SetStepsPerSecond(steps);
 }
 
-size_t Stepper::GetStepsPerSecond()
+size_t Stepper::GetStepsPerSecond() const
 {
-  return mStepsPerSecond;
+  return mStepperMove.GetStepsPerSecond();
 }
 
-void Stepper::Step()
+void Stepper::SetRampRate(const size_t drpmSquared)
 {
-  mSequencePos = (mSequencePos + 1) % FullStepSequence::StepsInSequence;
-  SetStepState(sFullStepSequence[mSequencePos]);
+  mStepperRun.SetRampRate(drpmSquared);
 }
 
-void Stepper::SetStepState(const StepState& state) const
+size_t Stepper::GetRampRateDrpmPerSecond() const
 {
-  mMotorDriver.SetChannelDirection(Channel::A, state.ChannelADirection);
-  mMotorDriver.SetChannelDirection(Channel::B, state.ChannelBDirection);
-}
-
-void Stepper::CalculateNextStepTick()
-{
-  const size_t ticksPerStep = InterruptRateHz / mStepsPerSecond;
-  mNextStepTick = mTimerTick + ticksPerStep;
+  return mStepperRun.GetRampRateDrpmPerSecond();
 }
 
 void Stepper::OnTimerInterrupt()
 {
-  if (++mTimerTick < mNextStepTick)
-    return;
+  ++mTimerTick;
 
-  switch (mState)
-  {
-  case StepperState::Moving:
-    if (mStepsPending-- == 0)
-    {
-      mState = StepperState::Stopped;
-      return;
-    }
-  case StepperState::Running:
-    Step();
-    CalculateNextStepTick();
-    break;
-
-  case StepperState::Stopped:
-  default:
-    break;
-  }
+  mStepperMove.OnTimerTick(mTimerTick);
+  mStepperRun.OnTimerTick(mTimerTick);
 }

@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-namespace motor
+namespace driver
 {
 
 class L298n final : public IDualChannelMotorDriver

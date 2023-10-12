@@ -3,7 +3,7 @@
 #include "IDualChannelMotorDriver.h"
 #include "MockCalls.h"
 
-namespace motor
+namespace driver
 {
 
 class MockDualChannelMotorDriver final : public IDualChannelMotorDriver

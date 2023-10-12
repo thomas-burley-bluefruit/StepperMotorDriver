@@ -52,6 +52,7 @@
   "files.associations": {
     "xlocale": "cpp",
     "xstring": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "cstddef": "cpp"
   }
 }

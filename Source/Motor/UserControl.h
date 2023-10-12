@@ -26,11 +26,14 @@ public:
 
   static constexpr char const* RunCommandName = "run";
   static constexpr char const* StopCommandName = "stop";
+  static constexpr char const* StopHiZCommandName = "stophiz";
   static constexpr char const* SetCommandName = "set";
   static constexpr char const* StepCommandName = "step";
+  static constexpr char const* SetRampRateCommandName = "setramprate";
   static constexpr char const* DrpmParameterName = "drpm";
   static constexpr char const* StepsParameterName = "steps";
   static constexpr char const* StepsPerSecParameterName = "stepspersec";
+  static constexpr char const* DrpmPerSecParameterName = "drpmpersec";
 
 private:
   IStepper& mStepper;

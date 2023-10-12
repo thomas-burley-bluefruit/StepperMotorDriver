@@ -6,6 +6,7 @@
 #include "InterruptTimer1Khz.h"
 #include "L298n.h"
 #include "Stepper.h"
+#include "StepperDriver.h"
 #include "TerminalIn.h"
 #include "TerminalOut.h"
 #include "UartDriver.h"
@@ -15,7 +16,6 @@ void Initialisation::Initialise()
 {
   (void)GetUserControl();
   (void)GetTerminalIn();
-  GetStepper().Init();
   GetTerminalIn().Start();
 }
 
@@ -65,17 +65,22 @@ driver::IUartDriver& Initialisation::GetUartDriver()
   return uartDriver;
 }
 
-motor::IDualChannelMotorDriver& Initialisation::GetDualChannelMotorDriver()
+driver::IDualChannelMotorDriver& Initialisation::GetDualChannelMotorDriver()
 {
-  static motor::L298n l298n(GetGpioDriver());
+  static driver::L298n l298n(GetGpioDriver());
   return l298n;
 }
 
 motor::IStepper& Initialisation::GetStepper()
 {
-  static motor::Stepper stepper(GetDualChannelMotorDriver(),
-    GetInterruptTimer10Khz());
+  static motor::Stepper stepper(GetStepperDriver(), GetInterruptTimer10Khz());
   return stepper;
+}
+
+motor::IStepperDriver& Initialisation::GetStepperDriver()
+{
+  static motor::StepperDriver stepperDriver(GetDualChannelMotorDriver());
+  return stepperDriver;
 }
 
 motor::UserControl& Initialisation::GetUserControl()

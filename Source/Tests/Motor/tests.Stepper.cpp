@@ -1,6 +1,6 @@
 #include "FullStepSequence.h"
-#include "mock.DualChannelMotorDriver.h"
 #include "mock.InterruptTimer10Khz.h"
+#include "mock.StepperDriver.h"
 #include "Stepper.h"
 #include "gmock/gmock.h"
 
@@ -12,7 +12,7 @@ class StepperTests : public Test
 {
 public:
   StepperTests() :
-    mStepper(mMotorDriver, mInterruptTimer)
+    mStepper(mStepperDriver, mInterruptTimer)
   {
   }
 
@@ -23,12 +23,12 @@ protected:
       mStepper.OnTimerInterrupt();
   }
 
-  size_t DrpmToStepsPerSec(const size_t speedDrpm)
+  float DrpmToStepsPerSec(const size_t speedDrpm)
   {
-    return ((speedDrpm / 10) / 60) * 200;
+    return ((speedDrpm / 10.0f) / 60.0f) * 200.0f;
   }
 
-  MockDualChannelMotorDriver mMotorDriver;
+  MockStepperDriver mStepperDriver;
   MockInterruptTimer10Khz mInterruptTimer;
   Stepper mStepper;
 };
@@ -39,186 +39,98 @@ TEST_F(StepperTests, registers_with_interrupt_timer_on_construction)
   ASSERT_EQ(&mStepper, mInterruptTimer.Callback);
 }
 
-TEST_F(StepperTests, init_sets_motor_channels_to_start_of_full_step_sequence)
+TEST_F(StepperTests, moving_1_step_commands_the_stepper_driver_to_step_forward_once)
 {
   // Given, when
-  mStepper.Init();
-
-  // Then
-  ASSERT_EQ(2, mMotorDriver.SetDirectionCalls.CallCount());
-  ASSERT_TRUE(mMotorDriver.SetDirectionCalls.CalledWithParams(
-    {Channel::A, sFullStepSequence[0].ChannelADirection}));
-  ASSERT_TRUE(mMotorDriver.SetDirectionCalls.CalledWithParams(
-    {Channel::B, sFullStepSequence[0].ChannelBDirection}));
-}
-
-TEST_F(StepperTests, single_step_sets_motor_channels_to_second_step_in_sequence)
-{
-  // Given
-  mStepper.Init();
-  mMotorDriver.Reset();
-
-  // When
   mStepper.Move(1);
 
   // Then
-  ASSERT_EQ(2, mMotorDriver.SetDirectionCalls.CallCount());
-  ASSERT_TRUE(mMotorDriver.SetDirectionCalls.CalledWithParams(
-    {Channel::A, sFullStepSequence[1].ChannelADirection}));
-  ASSERT_TRUE(mMotorDriver.SetDirectionCalls.CalledWithParams(
-    {Channel::B, sFullStepSequence[1].ChannelBDirection}));
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
+  ASSERT_TRUE(
+    mStepperDriver.StepCalls.CalledWithParams(motor::Direction::Forward));
 }
 
-TEST_F(StepperTests, subsequent_single_steps_cycle_through_step_sequence)
+TEST_F(StepperTests,
+double_step_performs_second_step_on_the_timer_tick_after_the_period_between_steps_has_elapsed)
 {
-  // Given
-  mStepper.Init();
-  mMotorDriver.Reset();
-
-  for (size_t i = 1; i < FullStepSequence::StepsInSequence * 2; ++i)
-  {
-    const auto expectedSequencePos = i % FullStepSequence::StepsInSequence;
-
-    // When
-    mStepper.Move(1);
-
-    // Then
-    ASSERT_EQ(2, mMotorDriver.SetDirectionCalls.CallCount());
-    ASSERT_TRUE(mMotorDriver.SetDirectionCalls.CalledWithParams(
-      {Channel::A, sFullStepSequence[expectedSequencePos].ChannelADirection}));
-    ASSERT_TRUE(mMotorDriver.SetDirectionCalls.CalledWithParams(
-      {Channel::B, sFullStepSequence[expectedSequencePos].ChannelBDirection}));
-
-    mMotorDriver.Reset();
-  }
-}
-
-TEST_F(StepperTests, double_step_performs_second_step_on_the_timer_tick_after_the_period_between_steps_has_elapsed)
-{
-  // Given
-  mStepper.Init();
-  mMotorDriver.Reset();
-
-  std::vector<MockDualChannelMotorDriver::SetDirectionParams>
-    expectedSetDirectionCalls;
-
-  size_t expectedSequencePos = 1;
-  expectedSetDirectionCalls.push_back({.channel = Channel::A,
-    .direction = sFullStepSequence[expectedSequencePos].ChannelADirection});
-  expectedSetDirectionCalls.push_back({.channel = Channel::B,
-    .direction = sFullStepSequence[expectedSequencePos].ChannelBDirection});
-
-  // When
+  // Given, when
   mStepper.Move(2);
 
   // First step performed immediately:
-  ASSERT_TRUE(
-    mMotorDriver.SetDirectionCalls.CallSequenceEq(expectedSetDirectionCalls));
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
 
   const size_t timerRateHz = 10'000;
   const size_t expectedTimerTicksToNextStep =
-    timerRateHz / Stepper::DefaultStepsPerSecond;
+    timerRateHz / mStepper.GetStepsPerSecond();
 
   SendTimerTicks(expectedTimerTicksToNextStep - 1);
 
   // No further calls have been made:
-  ASSERT_TRUE(
-    mMotorDriver.SetDirectionCalls.CallSequenceEq(expectedSetDirectionCalls));
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
 
   SendTimerTicks(1);
 
-  expectedSequencePos = 2;
-  expectedSetDirectionCalls.push_back({.channel = Channel::A,
-    .direction = sFullStepSequence[expectedSequencePos].ChannelADirection});
-  expectedSetDirectionCalls.push_back({.channel = Channel::B,
-    .direction = sFullStepSequence[expectedSequencePos].ChannelBDirection});
-
   // Then
-  ASSERT_TRUE(
-    mMotorDriver.SetDirectionCalls.CallSequenceEq(expectedSetDirectionCalls));
+  ASSERT_EQ(2, mStepperDriver.StepCalls.CallCount());
 }
 
 TEST_F(StepperTests, multiple_steps_performed_before_going_idle)
 {
   // Given
-  mStepper.Init();
-  mMotorDriver.Reset();
-
-  std::vector<MockDualChannelMotorDriver::SetDirectionParams>
-    expectedSetDirectionCalls;
-
-  size_t expectedSequencePos = 1;
-  expectedSetDirectionCalls.push_back({.channel = Channel::A,
-    .direction = sFullStepSequence[expectedSequencePos].ChannelADirection});
-  expectedSetDirectionCalls.push_back({.channel = Channel::B,
-    .direction = sFullStepSequence[expectedSequencePos].ChannelBDirection});
+  const size_t expectedSteps = 5;
+  size_t expectedStepsPerformed = 0;
 
   // When
-  const size_t expectedSteps = 5;
   mStepper.Move(expectedSteps);
 
   // First step performed immediately:
-  ASSERT_TRUE(
-    mMotorDriver.SetDirectionCalls.CallSequenceEq(expectedSetDirectionCalls));
+  expectedStepsPerformed++;
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
 
   const size_t expectedTimerTicksToNextStep =
-    mInterruptTimer.GetInterruptRateHz() / Stepper::DefaultStepsPerSecond;
+    mInterruptTimer.GetInterruptRateHz() / mStepper.GetStepsPerSecond();
 
-  for (size_t i = 0; i < expectedSteps - 1; ++i)
+  while (expectedStepsPerformed < expectedSteps)
   {
     SendTimerTicks(expectedTimerTicksToNextStep);
-    expectedSequencePos =
-      (expectedSequencePos + 1) % FullStepSequence::StepsInSequence;
-
-    expectedSetDirectionCalls.push_back({.channel = Channel::A,
-      .direction = sFullStepSequence[expectedSequencePos].ChannelADirection});
-    expectedSetDirectionCalls.push_back({.channel = Channel::B,
-      .direction = sFullStepSequence[expectedSequencePos].ChannelBDirection});
-
-    // Then
-    ASSERT_TRUE(
-      mMotorDriver.SetDirectionCalls.CallSequenceEq(expectedSetDirectionCalls));
+    expectedStepsPerformed++;
+    ASSERT_EQ(expectedStepsPerformed, mStepperDriver.StepCalls.CallCount());
   }
 
   // Then: no further steps made
   SendTimerTicks(expectedTimerTicksToNextStep * 2);
-  ASSERT_TRUE(
-    mMotorDriver.SetDirectionCalls.CallSequenceEq(expectedSetDirectionCalls));
+  ASSERT_EQ(expectedStepsPerformed, mStepperDriver.StepCalls.CallCount());
 }
 
 TEST_F(StepperTests, run_runs_motor_at_specified_drpm)
 {
   // Given
-  mStepper.Init();
-  mMotorDriver.Reset();
+  mStepper.EnableRamping(false);
 
   const size_t speedDrpm = 1000;
-  const size_t expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
-  const size_t expectedTimerTicksPerStep =
-    mInterruptTimer.GetInterruptRateHz() / expectedStepsPerSecond;
+  const auto expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
+  const auto expectedTimerTicksPerStep = static_cast<size_t>(
+    mInterruptTimer.GetInterruptRateHz() / expectedStepsPerSecond);
 
   // When
   mStepper.Run(speedDrpm);
 
   // Then
-  ASSERT_EQ(expectedStepsPerSecond, mStepper.GetStepsPerSecond());
+  ASSERT_EQ(speedDrpm, mStepper.GetRunSpeedDrpm());
   ASSERT_TRUE(mStepper.Running());
 
-  const size_t stepsToCheck = Stepper::StepsPerRotation * 10;
-  const size_t motorDriverCallsPerStep = 2;
+  const size_t stepsToCheck = mStepper.GetStepsPerRotation() * 10;
   for (size_t i = 0; i < stepsToCheck; ++i)
   {
     SendTimerTicks(expectedTimerTicksPerStep);
-    ASSERT_EQ(motorDriverCallsPerStep * (i + 1),
-      mMotorDriver.SetDirectionCalls.CallCount());
+    ASSERT_EQ(i + 1, mStepperDriver.StepCalls.CallCount());
   }
 }
 
 TEST_F(StepperTests, stop_stops_motor)
 {
   // Given
-  mStepper.Init();
-  mMotorDriver.Reset();
+  mStepper.EnableRamping(false);
 
   const size_t speedDrpm = 1000;
   const size_t expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
@@ -227,10 +139,8 @@ TEST_F(StepperTests, stop_stops_motor)
 
   mStepper.Run(speedDrpm);
   ASSERT_TRUE(mStepper.Running());
-  const size_t motorDriverCallsPerStep = 2;
   SendTimerTicks(expectedTimerTicksPerStep);
-  ASSERT_EQ(motorDriverCallsPerStep,
-    mMotorDriver.SetDirectionCalls.CallCount());
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
 
   // When
   mStepper.Stop();
@@ -238,6 +148,19 @@ TEST_F(StepperTests, stop_stops_motor)
 
   // Then
   ASSERT_FALSE(mStepper.Running());
-  ASSERT_EQ(motorDriverCallsPerStep,
-    mMotorDriver.SetDirectionCalls.CallCount());
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
+}
+
+TEST_F(StepperTests, stop_hiz_stops_running_and_sets_driver_to_hiz)
+{
+  // Given
+  mStepper.Run(1000);
+  ASSERT_TRUE(mStepper.Running());
+
+  // When
+  mStepper.StopHiZ();
+
+  // Then
+  ASSERT_FALSE(mStepper.Running());
+  ASSERT_TRUE(mStepperDriver.StopHiZCalled);
 }
