@@ -25,13 +25,13 @@ protected:
   UserControl mUserControl;
 };
 
-TEST_F(UserControlTests, registers_with_user_button_on_contruction)
+TEST_F(UserControlTests, registers_with_user_button_on_construction)
 {
   ASSERT_TRUE(mUserButton.RegisterCallbackCalled);
   ASSERT_EQ(&mUserControl, mUserButton.Callback);
 }
 
-TEST_F(UserControlTests, registers_with_command_handler_on_contruction)
+TEST_F(UserControlTests, registers_with_command_handler_on_construction)
 {
   ASSERT_TRUE(mCommandRegistry.RegisterHandlerCalled);
   ASSERT_EQ(&mUserControl, mCommandRegistry.RegisteredHandler);
@@ -111,4 +111,35 @@ TEST_F(UserControlTests, stop_command_stops_motor)
 
   // Then
   ASSERT_TRUE(mStepper.StopCalled);
+}
+
+TEST_F(UserControlTests, set_ramp_rate_command_sets_ramp_rate)
+{
+  // Given
+  MockCommandData command;
+  command.GetCommandReturnValue = UserControl::SetRampRateCommandName;
+  const size_t expectedRampRate = 1234;
+  command.Pairs[UserControl::DrpmPerSecParameterName] =
+    std::to_string(expectedRampRate);
+  command.GetParameterCountReturnValue = 1;
+
+  // When
+  mUserControl.Run(command);
+
+  // Then
+  ASSERT_TRUE(mStepper.SetRampRateCalled);
+  ASSERT_EQ(expectedRampRate, mStepper.SetRampRateDrpm);
+}
+
+TEST_F(UserControlTests, stop_hiz_command_stops_motor_hiz)
+{
+  // Given
+  MockCommandData command;
+  command.GetCommandReturnValue = UserControl::StopHiZCommandName;
+
+  // When
+  mUserControl.Run(command);
+
+  // Then
+  ASSERT_TRUE(mStepper.StopHiZCalled);
 }

@@ -30,6 +30,11 @@ public:
     StopCalled = true;
   }
 
+  void StopHiZ() override
+  {
+    StopHiZCalled = true;
+  }
+
   void SetStepsPerSecond(const size_t steps) override
   {
     SetStepsPerSecondCalled = true;
@@ -41,7 +46,11 @@ public:
     return 0;
   }
 
-  void SetRampRate(const size_t drpmSquared) override {}
+  void SetRampRate(const size_t drpmSquared) override
+  {
+    SetRampRateCalled = true;
+    SetRampRateDrpm = drpmSquared;
+  }
 
   size_t GetRampRateDrpmPerSecond() const override
   {
@@ -53,8 +62,11 @@ public:
   bool RunCalled = false;
   int32_t RunDrpm = 0;
   bool StopCalled = false;
+  bool StopHiZCalled = false;
   bool SetStepsPerSecondCalled = false;
   size_t SetStepsPerSecondSteps = 0;
+  bool SetRampRateCalled = false;
+  size_t SetRampRateDrpm = 0;
 };
 
 }

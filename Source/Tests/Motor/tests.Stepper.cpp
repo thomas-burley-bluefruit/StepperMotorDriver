@@ -150,3 +150,17 @@ TEST_F(StepperTests, stop_stops_motor)
   ASSERT_FALSE(mStepper.Running());
   ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
 }
+
+TEST_F(StepperTests, stop_hiz_stops_running_and_sets_driver_to_hiz)
+{
+  // Given
+  mStepper.Run(1000);
+  ASSERT_TRUE(mStepper.Running());
+
+  // When
+  mStepper.StopHiZ();
+
+  // Then
+  ASSERT_FALSE(mStepper.Running());
+  ASSERT_TRUE(mStepperDriver.StopHiZCalled);
+}

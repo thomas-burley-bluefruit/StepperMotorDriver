@@ -58,5 +58,22 @@ bool UserControl::Run(command::ICommandData& command)
     return true;
   }
 
+  if (command.CommandIs(StopHiZCommandName) && command.GetParameterCount() == 0)
+  {
+    mStepper.StopHiZ();
+    return true;
+  }
+
+  if (command.CommandIs(SetRampRateCommandName)
+    && command.GetParameterCount() == 1)
+  {
+    uint32_t drpmPerSec = 0;
+    if (!command.GetUint(DrpmPerSecParameterName, drpmPerSec))
+      return false;
+
+    mStepper.SetRampRate(drpmPerSec);
+    return true;
+  }
+
   return false;
 }

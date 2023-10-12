@@ -26,6 +26,7 @@ public:
   void Run(const int32_t drpm) override;
   bool Running() const override;
   void Stop() override;
+  void StopHiZ() override;
   void Move(const size_t steps) override;
   void SetStepsPerSecond(const size_t steps) override;
   size_t GetStepsPerSecond() const override;

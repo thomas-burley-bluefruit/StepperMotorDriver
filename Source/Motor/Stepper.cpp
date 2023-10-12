@@ -50,6 +50,12 @@ void Stepper::Stop()
   mStepperRun.Stop();
 }
 
+void Stepper::StopHiZ()
+{
+  mStepperRun.Stop();
+  mStepperDriver.StopHiZ();
+}
+
 void Stepper::SetStepsPerSecond(const size_t steps)
 {
   mStepperMove.SetStepsPerSecond(steps);
