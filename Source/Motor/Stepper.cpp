@@ -20,7 +20,7 @@ void Stepper::EnableRamping(const bool enable)
   mStepperRun.EnableRamping(enable);
 }
 
-size_t Stepper::GetRunSpeedDrpm() const
+int32_t Stepper::GetRunSpeedDrpm() const
 {
   return mStepperRun.GetRunSpeedDrpm();
 }
@@ -32,11 +32,17 @@ size_t Stepper::GetStepsPerRotation() const
 
 void Stepper::Move(const size_t steps)
 {
+  if (Running())
+    return;
+
   mStepperMove.Move(steps);
 }
 
 void Stepper::Run(const int32_t drpm)
 {
+  if (mStepperMove.Moving())
+    return;
+
   mStepperRun.Run(drpm);
 }
 

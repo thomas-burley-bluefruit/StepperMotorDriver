@@ -34,6 +34,11 @@ public:
     return calls == mParams;
   }
 
+  const T& operator[](size_t index) const
+  {
+    return mParams[index];
+  }
+
 private:
   std::vector<T> mParams;
 };

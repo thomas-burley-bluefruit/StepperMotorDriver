@@ -118,6 +118,26 @@ TEST_F(CommandInterpreterParametersTests, can_retrieve_up_to_max_arguments)
   }
 }
 
+TEST_F(CommandInterpreterParametersTests, can_retrieve_negative_number_as_signed_int)
+{
+  // Given
+  const auto key = "key";
+  const int32_t expectedNumber = -1234;
+
+  const auto commandString =
+    std::format("component=stepper,command=blah,{}={}\n", key,
+      std::to_string(expectedNumber));
+  auto command = CreateRawCommand(commandString);
+
+  // When
+  mCommandInterpreter.Interpret(command, commandString.length());
+
+  // Then
+  int32_t actualNumber = 0;
+  ASSERT_TRUE(mCommandInterpreter.GetCommandData().GetInt(key, actualNumber));
+  ASSERT_EQ(actualNumber, expectedNumber);
+}
+
 TEST_F(CommandInterpreterParametersTests, retrieving_string_as_uint_fails)
 {
   // Given

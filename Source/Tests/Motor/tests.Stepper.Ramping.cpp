@@ -48,15 +48,15 @@ protected:
   Stepper mStepper;
 };
 
-TEST_F(StepperRampingTests, speed_increase_is_ramped_at_default_rate)
+TEST_F(StepperRampingTests, speed_increase_is_ramped_at_default_rate_from_0_going_forward)
 {
   // Given
   const auto rampRateDrpmPerSecond = mStepper.GetRampRateDrpmPerSecond();
 
-  const size_t startingSpeedDrpm = 0;
-  const size_t targetSpeedDrpm = 1000;
-  const size_t speedDifference = targetSpeedDrpm - startingSpeedDrpm;
-  const size_t expectedSecondsTilRampEnd =
+  const int32_t startingSpeedDrpm = 0;
+  const int32_t targetSpeedDrpm = 1000;
+  const int32_t speedDifference = targetSpeedDrpm - startingSpeedDrpm;
+  const int32_t expectedSecondsTilRampEnd =
     speedDifference / rampRateDrpmPerSecond;
 
   size_t currentSpeedDrpm = startingSpeedDrpm;
@@ -71,6 +71,33 @@ TEST_F(StepperRampingTests, speed_increase_is_ramped_at_default_rate)
   {
     SendTimerTicks(ticksPerSecond);
     currentSpeedDrpm += rampRateDrpmPerSecond;
+    ASSERT_EQ(currentSpeedDrpm, mStepper.GetRunSpeedDrpm());
+  }
+}
+
+TEST_F(StepperRampingTests, speed_increase_is_ramped_at_default_rate_from_0_going_reverse)
+{
+  // Given
+  const auto rampRateDrpmPerSecond = mStepper.GetRampRateDrpmPerSecond();
+
+  const int32_t startingSpeedDrpm = 0;
+  const int32_t targetSpeedDrpm = -1000;
+  const int32_t speedDifference = abs(targetSpeedDrpm - startingSpeedDrpm);
+  const int32_t expectedSecondsTilRampEnd =
+    speedDifference / rampRateDrpmPerSecond;
+
+  size_t currentSpeedDrpm = startingSpeedDrpm;
+
+  // When
+  mStepper.Run(targetSpeedDrpm);
+
+  // Then
+  const size_t ticksPerSecond = mInterruptTimer.GetInterruptRateHz();
+
+  for (size_t i = 0; i < expectedSecondsTilRampEnd; ++i)
+  {
+    SendTimerTicks(ticksPerSecond);
+    currentSpeedDrpm -= rampRateDrpmPerSecond;
     ASSERT_EQ(currentSpeedDrpm, mStepper.GetRunSpeedDrpm());
   }
 }

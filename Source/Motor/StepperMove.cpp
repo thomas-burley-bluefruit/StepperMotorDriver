@@ -1,5 +1,7 @@
 #include "StepperMove.h"
 
+#include <cmath>
+
 using namespace ::motor;
 
 StepperMove::StepperMove(IStepperDriver& stepperDriver,
@@ -9,18 +11,14 @@ StepperMove::StepperMove(IStepperDriver& stepperDriver,
 {
 }
 
-void StepperMove::Move(const size_t steps)
+void StepperMove::Move(const int32_t steps)
 {
   if (steps == 0)
     return;
 
-  mStepperDriver.Step(Direction::Forward);
-
-  if (steps == 1)
-    return;
-
-  mNextStepTick = mStepperUtility.GetNextStepTick(mStepsPerSecond, mTimerTick);
-  mStepsPending = steps - 1;
+  mDirection = steps > 0 ? Direction::Forward : Direction::Reverse;
+  mNextStepTick = mTimerTick;
+  mStepsPending = abs(steps);
 }
 
 void StepperMove::SetStepsPerSecond(const size_t steps)
@@ -40,7 +38,12 @@ void StepperMove::OnTimerTick(const size_t timerTick)
   if (mStepsPending == 0 || mTimerTick < mNextStepTick)
     return;
 
-  mStepperDriver.Step(Direction::Forward);
+  mStepperDriver.Step(mDirection);
   --mStepsPending;
   mNextStepTick = mStepperUtility.GetNextStepTick(mStepsPerSecond, mTimerTick);
+}
+
+bool StepperMove::Moving() const
+{
+  return mStepsPending > 0;
 }

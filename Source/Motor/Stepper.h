@@ -19,7 +19,7 @@ public:
     driver::IInterruptTimer10Khz& interruptTimer10Khz);
 
   void EnableRamping(const bool enable);
-  size_t GetRunSpeedDrpm() const;
+  int32_t GetRunSpeedDrpm() const;
   size_t GetStepsPerRotation() const;
 
   // IStepper

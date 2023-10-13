@@ -25,8 +25,16 @@ public:
     if (Pairs.find(key) == Pairs.end())
       return false;
 
-    std::string valueString = Pairs.at(key);
-    outInt = std::stoul(valueString);
+    outInt = std::stoul(Pairs[key]);
+    return true;
+  }
+
+  bool GetInt(const char* key, int32_t& outInt) const override
+  {
+    if (Pairs.find(key) == Pairs.end())
+      return false;
+
+    outInt = std::stol(Pairs[key]);
     return true;
   }
 
@@ -50,7 +58,7 @@ public:
     return GetParameterCountReturnValue;
   }
 
-  std::map<std::string, std::string> Pairs {};
+  mutable std::map<std::string, std::string> Pairs {};
   bool GetStringReturnValue = false;
   std::string GetStringOutput;
   bool GetUintReturnValue = false;
