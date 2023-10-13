@@ -154,7 +154,7 @@ TEST_F(StepperTests, multiple_reverse_steps_performed_before_going_idle)
   ASSERT_EQ(expectedStepsPerformed, mStepperDriver.StepCalls.CallCount());
 }
 
-TEST_F(StepperTests, run_runs_motor_at_specified_drpm)
+TEST_F(StepperTests, run_runs_motor_at_specified_forward_drpm)
 {
   // Given
   mStepper.EnableRamping(false);
@@ -176,6 +176,33 @@ TEST_F(StepperTests, run_runs_motor_at_specified_drpm)
   {
     SendTimerTicks(expectedTimerTicksPerStep);
     ASSERT_EQ(i + 1, mStepperDriver.StepCalls.CallCount());
+    ASSERT_EQ(motor::Direction::Forward, mStepperDriver.StepCalls[i]);
+  }
+}
+
+TEST_F(StepperTests, run_runs_motor_at_specified_reverse_drpm)
+{
+  // Given
+  mStepper.EnableRamping(false);
+
+  const int32_t speedDrpm = 1000;
+  const auto expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
+  const auto expectedTimerTicksPerStep = static_cast<size_t>(
+    mInterruptTimer.GetInterruptRateHz() / expectedStepsPerSecond);
+
+  // When
+  mStepper.Run(-speedDrpm);
+
+  // Then
+  ASSERT_EQ(-speedDrpm, mStepper.GetRunSpeedDrpm());
+  ASSERT_TRUE(mStepper.Running());
+
+  const size_t stepsToCheck = mStepper.GetStepsPerRotation() * 10;
+  for (size_t i = 0; i < stepsToCheck; ++i)
+  {
+    SendTimerTicks(expectedTimerTicksPerStep);
+    ASSERT_EQ(i + 1, mStepperDriver.StepCalls.CallCount());
+    ASSERT_EQ(motor::Direction::Reverse, mStepperDriver.StepCalls[i]);
   }
 }
 

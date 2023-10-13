@@ -1,5 +1,7 @@
 #include "StepperUtility.h"
 
+#include <cmath>
+
 using namespace ::motor;
 
 StepperUtility::StepperUtility(const size_t interruptRateHz,
@@ -18,12 +20,13 @@ size_t StepperUtility::GetNextStepTick(const float stepsPerSecond,
   return lastStepTick + ticksPerStep;
 }
 
-float StepperUtility::DrpmToStepsPerSecond(const float drpm) const
+float StepperUtility::DrpmToStepsPerSecond(const int32_t drpm) const
 {
   return ((drpm / 10.0f) / 60.0f) * StepsPerRotation;
 }
 
-float StepperUtility::StepsPerSecondToDrpm(const float steps) const
+int32_t StepperUtility::StepsPerSecondToDrpm(const float steps) const
 {
-  return ((steps * 10.0f) * 60) / StepsPerRotation;
+  return static_cast<int32_t>(
+    roundf(((steps * 10.0f) * 60) / StepsPerRotation));
 }

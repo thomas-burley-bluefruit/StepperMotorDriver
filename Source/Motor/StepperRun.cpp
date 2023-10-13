@@ -15,14 +15,10 @@ StepperRun::StepperRun(IStepperDriver& stepperDriver,
 void StepperRun::Run(const int32_t drpm)
 {
   if (mRampingEnabled)
-  {
     mSpeedRamping.Init(mStepsPerSecond,
       mStepperUtility.DrpmToStepsPerSecond(drpm), mTimerTick);
-  }
   else
-  {
     mStepsPerSecond = mStepperUtility.DrpmToStepsPerSecond(drpm);
-  }
 
   mLastStepTick = mTimerTick;
   mStopped = false;
@@ -34,10 +30,9 @@ void StepperRun::Stop()
   mStepsPerSecond = 0;
 }
 
-size_t StepperRun::GetRunSpeedDrpm() const
+int32_t StepperRun::GetRunSpeedDrpm() const
 {
-  return static_cast<size_t>(
-    roundf(mStepperUtility.StepsPerSecondToDrpm(mStepsPerSecond)));
+  return mStepperUtility.StepsPerSecondToDrpm(mStepsPerSecond);
 }
 
 void StepperRun::EnableRamping(const bool enable)
@@ -75,11 +70,14 @@ void StepperRun::OnTimerTick(const size_t timerTick)
   }
 
   mNextStepTick =
-    mStepperUtility.GetNextStepTick(mStepsPerSecond, mLastStepTick);
+    mStepperUtility.GetNextStepTick(abs(mStepsPerSecond), mLastStepTick);
 
   if (mTimerTick < mNextStepTick)
     return;
 
-  mStepperDriver.Step(Direction::Forward);
+  const auto direction =
+    mStepsPerSecond < 0.0f ? Direction::Reverse : Direction::Forward;
+
+  mStepperDriver.Step(direction);
   mLastStepTick = mTimerTick;
 }
