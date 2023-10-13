@@ -43,6 +43,7 @@ TEST_F(StepperTests, moving_1_step_commands_the_stepper_driver_to_step_forward_o
 {
   // Given, when
   mStepper.Move(1);
+  mStepper.OnTimerInterrupt();
 
   // Then
   ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
@@ -50,11 +51,24 @@ TEST_F(StepperTests, moving_1_step_commands_the_stepper_driver_to_step_forward_o
     mStepperDriver.StepCalls.CalledWithParams(motor::Direction::Forward));
 }
 
+TEST_F(StepperTests, moving_negative_1_step_commands_the_stepper_driver_to_step_backward_once)
+{
+  // Given, when
+  mStepper.Move(-1);
+  mStepper.OnTimerInterrupt();
+
+  // Then
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
+  ASSERT_TRUE(
+    mStepperDriver.StepCalls.CalledWithParams(motor::Direction::Reverse));
+}
+
 TEST_F(StepperTests,
 double_step_performs_second_step_on_the_timer_tick_after_the_period_between_steps_has_elapsed)
 {
   // Given, when
   mStepper.Move(2);
+  mStepper.OnTimerInterrupt();
 
   // First step performed immediately:
   ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
@@ -74,7 +88,7 @@ double_step_performs_second_step_on_the_timer_tick_after_the_period_between_step
   ASSERT_EQ(2, mStepperDriver.StepCalls.CallCount());
 }
 
-TEST_F(StepperTests, multiple_steps_performed_before_going_idle)
+TEST_F(StepperTests, multiple_forward_steps_performed_before_going_idle)
 {
   // Given
   const size_t expectedSteps = 5;
@@ -83,9 +97,12 @@ TEST_F(StepperTests, multiple_steps_performed_before_going_idle)
   // When
   mStepper.Move(expectedSteps);
 
-  // First step performed immediately:
+  // First step performed on next tick::
+  mStepper.OnTimerInterrupt();
   expectedStepsPerformed++;
   ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
+  ASSERT_EQ(motor::Direction::Forward,
+    mStepperDriver.StepCalls[expectedStepsPerformed - 1]);
 
   const size_t expectedTimerTicksToNextStep =
     mInterruptTimer.GetInterruptRateHz() / mStepper.GetStepsPerSecond();
@@ -95,6 +112,41 @@ TEST_F(StepperTests, multiple_steps_performed_before_going_idle)
     SendTimerTicks(expectedTimerTicksToNextStep);
     expectedStepsPerformed++;
     ASSERT_EQ(expectedStepsPerformed, mStepperDriver.StepCalls.CallCount());
+    ASSERT_EQ(motor::Direction::Forward,
+      mStepperDriver.StepCalls[expectedStepsPerformed - 1]);
+  }
+
+  // Then: no further steps made
+  SendTimerTicks(expectedTimerTicksToNextStep * 2);
+  ASSERT_EQ(expectedStepsPerformed, mStepperDriver.StepCalls.CallCount());
+}
+
+TEST_F(StepperTests, multiple_reverse_steps_performed_before_going_idle)
+{
+  // Given
+  const size_t expectedSteps = 5;
+  size_t expectedStepsPerformed = 0;
+
+  // When
+  mStepper.Move(-expectedSteps);
+
+  // First step performed on next tick::
+  mStepper.OnTimerInterrupt();
+  expectedStepsPerformed++;
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
+  ASSERT_EQ(motor::Direction::Reverse,
+    mStepperDriver.StepCalls[expectedStepsPerformed - 1]);
+
+  const size_t expectedTimerTicksToNextStep =
+    mInterruptTimer.GetInterruptRateHz() / mStepper.GetStepsPerSecond();
+
+  while (expectedStepsPerformed < expectedSteps)
+  {
+    SendTimerTicks(expectedTimerTicksToNextStep);
+    expectedStepsPerformed++;
+    ASSERT_EQ(expectedStepsPerformed, mStepperDriver.StepCalls.CallCount());
+    ASSERT_EQ(motor::Direction::Reverse,
+      mStepperDriver.StepCalls[expectedStepsPerformed - 1]);
   }
 
   // Then: no further steps made

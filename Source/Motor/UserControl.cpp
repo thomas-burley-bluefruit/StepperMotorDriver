@@ -24,8 +24,8 @@ bool UserControl::Run(command::ICommandData& command)
 {
   if (command.CommandIs(StepCommandName) && command.GetParameterCount() == 1)
   {
-    uint32_t steps = 0;
-    if (!command.GetUint(StepsParameterName, steps))
+    int32_t steps = 0;
+    if (!command.GetInt(StepsParameterName, steps))
       return false;
 
     mStepper.Move(steps);
@@ -44,8 +44,8 @@ bool UserControl::Run(command::ICommandData& command)
 
   if (command.CommandIs(RunCommandName) && command.GetParameterCount() == 1)
   {
-    uint32_t drpm = 0;
-    if (!command.GetUint(DrpmParameterName, drpm))
+    int32_t drpm = 0;
+    if (!command.GetInt(DrpmParameterName, drpm))
       return false;
 
     mStepper.Run(drpm);
