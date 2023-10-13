@@ -42,3 +42,8 @@ void StepperMove::OnTimerTick(const size_t timerTick)
   --mStepsPending;
   mNextStepTick = mStepperUtility.GetNextStepTick(mStepsPerSecond, mTimerTick);
 }
+
+bool StepperMove::Moving() const
+{
+  return mStepsPending > 0;
+}

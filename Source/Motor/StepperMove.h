@@ -17,6 +17,7 @@ public:
   void SetStepsPerSecond(const size_t steps);
   size_t GetStepsPerSecond() const;
   void OnTimerTick(const size_t timerTick);
+  bool Moving() const;
 
   static constexpr size_t DefaultStepsPerSecond = 500;
 

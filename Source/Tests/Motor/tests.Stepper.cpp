@@ -28,6 +28,11 @@ protected:
     return ((speedDrpm / 10.0f) / 60.0f) * 200.0f;
   }
 
+  int32_t StepsPerSecToDrpm(const float stepsPerSec)
+  {
+    return static_cast<int32_t>(roundf(((stepsPerSec * 10.0f) * 60) / 200));
+  }
+
   MockStepperDriver mStepperDriver;
   MockInterruptTimer10Khz mInterruptTimer;
   Stepper mStepper;
@@ -242,4 +247,45 @@ TEST_F(StepperTests, stop_hiz_stops_running_and_sets_driver_to_hiz)
   // Then
   ASSERT_FALSE(mStepper.Running());
   ASSERT_TRUE(mStepperDriver.StopHiZCalled);
+}
+
+TEST_F(StepperTests, cannot_move_while_running)
+{
+  // Given
+  mStepper.EnableRamping(false);
+
+  const int32_t speedDrpm = 1000;
+  mStepper.Run(speedDrpm);
+  ASSERT_TRUE(mStepper.Running());
+
+  const size_t expectedStepsPerSecond = DrpmToStepsPerSec(speedDrpm);
+  const size_t expectedTimerTicksPerStep =
+    mInterruptTimer.GetInterruptRateHz() / expectedStepsPerSecond;
+
+  // When
+  mStepper.Move(1);
+  SendTimerTicks(expectedTimerTicksPerStep);
+
+  // Then
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
+}
+
+TEST_F(StepperTests, cannot_run_while_moving)
+{
+  // Given
+  mStepper.Move(100);
+
+  mStepper.EnableRamping(false);
+
+  const int32_t speedDrpm = StepsPerSecToDrpm(mStepper.GetStepsPerSecond());
+  const size_t expectedTimerTicksPerStep =
+    mInterruptTimer.GetInterruptRateHz() / mStepper.GetStepsPerSecond();
+
+  // When
+  mStepper.Run(speedDrpm);
+  SendTimerTicks(expectedTimerTicksPerStep);
+
+  // Then
+  ASSERT_FALSE(mStepper.Running());
+  ASSERT_EQ(1, mStepperDriver.StepCalls.CallCount());
 }

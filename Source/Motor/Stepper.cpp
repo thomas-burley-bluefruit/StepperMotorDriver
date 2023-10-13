@@ -32,11 +32,17 @@ size_t Stepper::GetStepsPerRotation() const
 
 void Stepper::Move(const size_t steps)
 {
+  if (Running())
+    return;
+
   mStepperMove.Move(steps);
 }
 
 void Stepper::Run(const int32_t drpm)
 {
+  if (mStepperMove.Moving())
+    return;
+
   mStepperRun.Run(drpm);
 }
 
